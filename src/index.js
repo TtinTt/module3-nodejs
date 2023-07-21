@@ -5,6 +5,9 @@ import { request } from "http";
 
 const application = express();
 
+application.use(express.json());
+application.use(express.urlencoded());
+
 // ví dụ trả về HTML
 application.get("/", (request, response) => {
   response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" }); //Để viết phần lớn các ngôn ngữ trên thế giới
@@ -14,55 +17,148 @@ application.get("/", (request, response) => {
   //   response.send("<h1>Đây là trang chủ</h1>"); //chỉ có trong express, có thể viết như thế này để thay thế 3 dòng response.writeHead , response.write , response.end
 });
 
-// ví dụ trả về JSON
+// application.get("/users/create", (req, res) => {
+//   res.send(`
+//         <form action="http://localhost:8000/users" method="POST">
+//             <input name="name" placeholder="Name"/>
+//             <input name="address" placeholder="Address"/>
+//             <input type="number" name="age" placeholder="Age"/>
+//             <button type="submit">Create</button>
+//         </form>
+//     `);
+// });
+
+// Với method GET: Khi submit thì sẽ nhận dữ liệu payload sẽ lấy thông qua res.query
+// Với method POST: Khi submit thì sẽ nhận dữ liệu payload sẽ lấy thông qua res.body
+
+// user LIST GET
 application.get("/users", (req, res) => {
-  //viết req, res thay cho request, response
-  const users = [
-    { id: 1, name: "Thái" },
-    { id: 2, name: "Sáng" },
-  ];
-
-  res.send(users); //chỉ có trong express, viết send có thể thay cho cả res.write, res.end, res.writeHead
+  res.send({
+    body: req.query,
+  });
 });
 
-// ví dụ đường dẫn tương đối
-application.get("/about/*", function (req, res) {
-  res.send("Trang đường dẫn tương đối");
+// user CREATE POST
+application.post("/users", (req, res) => {
+  res.send({
+    body: req.body,
+  });
 });
 
-// ví dụ về param
-application.get("/users/:id", function (req, res) {
-  const users = [
-    { id: 1, name: "Thái" },
-    { id: 2, name: "Sáng" },
-  ];
-
+// user UPDATE PUT
+application.put("/users/:id", (req, res) => {
   const id = req.params.id;
-
-  const user = users.find((u) => u.id == id);
-
-  if (user) {
-    res.send(user);
-  } else {
-    res.send({ error: "Người dùng không tồn tại" });
-  }
+  res.send(id);
 });
 
-// ví dụ lấy query string ()
+// user FIND GET
+application.get("/users/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// user DELETE DELETE
+application.delete("/users/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// product LIST GET
 application.get("/products", (req, res) => {
-  const products = [
-    { id: 1, name: "laptop" },
-    { id: 2, name: "tablet" },
-  ];
+  res.send({
+    body: req.query,
+  });
+});
 
-  const keyword = req.query.keyword;
-  const searchResult = products.filter((product) =>
-    product.name.includes(keyword)
-  );
+// product CREATE POST
+application.post("/products", (req, res) => {
+  res.send({
+    body: req.body,
+  });
+});
 
-  res.send({ keyword: keyword });
+// product UPDATE PUT
+application.put("/products/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// product FIND GET
+application.get("/products/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// product DELETE DELETE
+application.delete("/products/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// order LIST GET
+application.get("/orders", (req, res) => {
+  res.send({
+    body: req.query,
+  });
+});
+
+// order CREATE POST
+application.post("/orders", (req, res) => {
+  res.send({
+    body: req.body,
+  });
+});
+
+// order UPDATE PUT
+application.put("/orders/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// order FIND GET
+application.get("/orders/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// order DELETE DELETE
+application.delete("/orders/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// contact LIST GET
+application.get("/contacts", (req, res) => {
+  res.send({
+    body: req.query,
+  });
+});
+
+// contact CREATE POST
+application.post("/contacts", (req, res) => {
+  res.send({
+    body: req.body,
+  });
+});
+
+// contact UPDATE PUT
+application.put("/contacts/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// contact FIND GET
+application.get("/contacts/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
+});
+
+// contact DELETE DELETE
+application.delete("/contacts/:id", (req, res) => {
+  const id = req.params.id;
+  res.send(id);
 });
 
 application.listen(8000, () => {
-  console.log("sever started");
+  console.log("Server started");
 });

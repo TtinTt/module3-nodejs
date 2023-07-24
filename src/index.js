@@ -28,8 +28,8 @@ application.get("/", (request, response) => {
 //     `);
 // });
 
-// Với method GET: Khi submit thì sẽ nhận dữ liệu payload sẽ lấy thông qua res.query
-// Với method POST: Khi submit thì sẽ nhận dữ liệu payload sẽ lấy thông qua res.body
+// Với method GET: Khi submit thì sẽ nhận dữ liệu payload sẽ lấy thông qua req.query
+// Với method POST: Khi submit thì sẽ nhận dữ liệu payload sẽ lấy thông qua req.body
 
 // user LIST GET
 application.get("/users", (req, res) => {

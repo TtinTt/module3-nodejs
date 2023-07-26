@@ -9,7 +9,7 @@ router.post("/users", userController.addUser);
 router.get("/users/:id", userController.getDetailUser);
 router.get("/users/:id/edit", userController.viewEditUser);
 router.put("/users/:id", userController.updateUser);
-router.delete("/users", userController.deleteUser);
+router.delete("/users/:id", userController.deleteUser);
 
 // Product management
 

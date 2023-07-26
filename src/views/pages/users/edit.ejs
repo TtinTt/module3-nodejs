@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rikkei Academy</title>
   </head>
+
   <body>
-<h1>Chỉnh sửa người dùng</h1>
-<a href="/users">Trở về trang danh sách</a>
-
-<form menthod="POST" action='/users/<%= user.id %>?_method=PUT'>
-    <input type="text" placeholder="User name" name="username" value=<%= user.username %>></input>
-    <input type="text" placeholder="Email" name="email" value=<%= user.email %>></input>
-    <button type="submit">Lưu</button>
-</form>
-
+    <h1>Chỉnh sửa người dùng</h1>
+    <a href="/users">Trở về danh sách</a>
+    <form method="POST" action="/users/<%= user.id %>?_method=PUT">
+      <input
+        type="text"
+        name="username"
+        placeholder="Tên đăng nhập"
+        value="<%= user.username %>"
+      />
+      <input
+        type="text"
+        name="email"
+        placeholder="Email"
+        value="<%= user.email %>"
+      />
+      <button type="submit">Lưu</button>
+    </form>
   </body>
 </html>

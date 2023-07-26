@@ -5,26 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rikkei Academy</title>
   </head>
+
   <body>
-    <h1><%=title%></h1>
-    <a href="/users/new">Thêm mới</a>
-    <table>
-      <thead>
-        <td>ID</td>
-        <td>Tên đăng nhập</td>
-        <td>Email</td>
-        <td>Hành động</td>
-      </thead>
-      <tbody>
-        <% for (let user of users) {%>
-        <tr>
-          <td><%= user.id %></td>
-          <td><%= user.username %></td>
-          <td><%= user.email %></td>
-          <td><a href="users/<%= user.id %>/edit">Sửa</a></td>
-        </tr>
-        <%}%>
-      </tbody>
-    </table>
+    <div>
+      <h1><%= title %></h1>
+      <a href="/users/new">Thêm mới</a>
+      <table>
+        <thead>
+          <th>ID</th>
+          <th>Tên đăng nhập</th>
+          <th>Email</th>
+          <th>Hành động</th>
+        </thead>
+        <tbody>
+          <% for (let user of users) { %>
+          <tr>
+            <td><%= user.id %></td>
+            <td><%= user.username %></td>
+            <td><%= user.email %></td>
+            <td>
+              <a href="/users/<%= user.id %>/edit">Sửa</a>
+              <form action="/users/<%= user.id %>?_method=DELETE" method="POST">
+                <button type="submit">Xóa</button>
+              </form>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>

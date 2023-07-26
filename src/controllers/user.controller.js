@@ -1,23 +1,27 @@
 import getNextId from "../utilities/getNextId.js";
 
-const users = [
+let users = [
   {
     id: 1,
     username: "thailq",
-    email: "thailq@gmail.com",
+    email: "thailq@mail.com",
+  },
+  {
+    id: 2,
+    username: "giangnt",
+    email: "giangnt@mail.com",
   },
 ];
 
-//trả về trang HTML hiển thị danh sách users
+// Trả về trang HTML hiển thị danh sách users
 const searchUsers = (req, res) => {
-  // res.send("Danh sách user");
   res.render("pages/users/index", {
     title: "Danh sách người dùng",
     users: users,
   });
 };
 
-// Trả về HTML form thêm mới user
+// Trả về HTML - form thêm mới user
 const viewAddUser = (req, res) => {
   res.render("pages/users/new");
 };
@@ -33,6 +37,7 @@ const addUser = (req, res) => {
 
   users.push(newUser);
 
+  // Chuyển hướng về trang danh sách
   res.redirect("/users");
 };
 
@@ -42,6 +47,7 @@ const getDetailUser = (req, res) => {};
 // Trả về HTML form cập nhật user
 const viewEditUser = (req, res) => {
   const { id } = req.params;
+
   const user = users.find((user) => user.id == id);
 
   if (user) {
@@ -58,22 +64,42 @@ const viewEditUser = (req, res) => {
 // Thực thi cập nhật user
 const updateUser = (req, res) => {
   const { id } = req.params;
+
   const input = req.body;
+
   users = users.map((user) => {
     if (user.id == id) {
-      return { ...user, username: input.username, email: input.email };
+      return {
+        ...user,
+        username: input.username,
+        email: input.email,
+      };
     } else {
       return user;
     }
   });
 
-  res.send({ body: res.body });
-
+  // Chuyển hướng về trang danh sách
   res.redirect("/users");
 };
 
 // Thực thi xóa user
-const deleteUser = (req, res) => {};
+const deleteUser = (req, res) => {
+  const { id } = req.params;
+
+  const user = users.find((user) => user.id == id);
+
+  if (user) {
+    users = users.filter((user) => user.id != id);
+
+    // Chuyển hướng về trang danh sách
+    res.redirect("/users");
+  } else {
+    res.render("errors/404", {
+      msg: "Người dùng không tồn tại",
+    });
+  }
+};
 
 export default {
   searchUsers,

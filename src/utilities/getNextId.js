@@ -17,4 +17,5 @@ const getNextId = (items) => {
     return maxId + 1;
   }
 };
+
 export default getNextId;

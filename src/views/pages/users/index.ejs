@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rikkei Academy</title>
+  </head>
+  <body>
+    <h1><%=title%></h1>
+    <a href="/users/new">Thêm mới</a>
+    <table>
+      <thead>
+        <td>ID</td>
+        <td>Tên đăng nhập</td>
+        <td>Email</td>
+        <td>Hành động</td>
+      </thead>
+      <tbody>
+        <% for (let user of users) {%>
+        <tr>
+          <td><%= user.id %></td>
+          <td><%= user.username %></td>
+          <td><%= user.email %></td>
+          <td><a href="users/<%= user.id %>/edit">Sửa</a></td>
+        </tr>
+        <%}%>
+      </tbody>
+    </table>
+  </body>
+</html>

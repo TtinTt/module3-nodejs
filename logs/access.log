@@ -54,3 +54,7 @@
 ::1 - - [26/Jul/2023:14:10:42 +0000] "GET /users HTTP/1.1" 200 1311 "http://localhost:8000/users/1/edit" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 ::1 - - [26/Jul/2023:14:10:43 +0000] "GET /favicon.ico HTTP/1.1" 404 150 "http://localhost:8000/users" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 ::1 - - [26/Jul/2023:14:10:45 +0000] "DELETE /users/1?_method=DELETE HTTP/1.1" 404 149 "http://localhost:8000/users" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+::1 - - [26/Jul/2023:14:11:31 +0000] "DELETE /users/1?_method=DELETE HTTP/1.1" 302 56 "http://localhost:8000/users" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+::1 - - [26/Jul/2023:14:11:31 +0000] "GET /users HTTP/1.1" 200 944 "http://localhost:8000/users" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+::1 - - [26/Jul/2023:14:11:33 +0000] "DELETE /users/2?_method=DELETE HTTP/1.1" 302 56 "http://localhost:8000/users" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+::1 - - [26/Jul/2023:14:11:33 +0000] "GET /users HTTP/1.1" 200 575 "http://localhost:8000/users" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"

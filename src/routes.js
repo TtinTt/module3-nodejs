@@ -1,15 +1,16 @@
 import { Router } from "express";
-import userController from "./controllers/user.controller.js";
+import todoController from "./controllers/todo.controller.js";
 
-// User management
+// Todo management
 const router = Router();
-router.get("/users", userController.searchUsers);
-router.get("/users/new", userController.viewAddUser);
-router.post("/users", userController.addUser);
-router.get("/users/:id", userController.getDetailUser);
-router.get("/users/:id/edit", userController.viewEditUser);
-router.put("/users/:id", userController.updateUser);
-router.delete("/users/:id", userController.deleteUser);
+router.get("/todos", todoController.searchTodos);
+router.get("/todos/new", todoController.viewAddTodo);
+router.post("/todos", todoController.addTodo);
+router.get("/todos/:id", todoController.getDetailTodo);
+router.get("/todos/:id/edit", todoController.viewEditTodo);
+router.put("/todos/:id", todoController.updateTodo);
+router.delete("/todos/:id", todoController.deleteTodo);
+router.put("/todos/:id/complete", todoController.completeTodo);
 
 // Product management
 

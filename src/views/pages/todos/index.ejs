@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rikkei Academy</title>
+  </head>
+
+  <body>
+    <div>
+      <h1><%= title %></h1>
+      <a href="/todos/new">Thêm mới</a>
+      <table>
+        <thead>
+          <th>Người dùng</th>
+          <th>ID</th>
+          <th>Việc cần làm</th>
+          <th>Trạng thái</th>
+          <th>Hành động</th>
+        </thead>
+        <tbody>
+          <% for (let todo of todos) { %>
+          <tr>
+            <td><%= todo.userId %></td>
+            <td><%= todo.id %></td>
+            <td><%= todo.title %></td>
+
+            <td>
+              <form
+                action="/todos/<%= todo.id %>/complete?_method=PUT"
+                method="POST"
+              >
+                <button type="submit"><%= todo.completed %></button>
+              </form>
+            </td>
+            <td>
+              <a href="/todos/<%= todo.id %>/edit">Sửa</a>
+              <form action="/todos/<%= todo.id %>?_method=DELETE" method="POST">
+                <button type="submit">Xóa</button>
+              </form>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

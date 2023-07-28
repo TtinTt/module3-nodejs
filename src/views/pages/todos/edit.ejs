@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rikkei Academy</title>
+  </head>
+
+  <body>
+    <h1>Chỉnh sửa người dùng</h1>
+    <a href="/todos">Trở về danh sách</a>
+    <form method="POST" action="/todos/<%= todo.id %>?_method=PUT">
+      <input
+        type="number"
+        name="userId"
+        placeholder="ID người dùng"
+        value="<%= todo.userId %>"
+      />
+      <input
+        type="text"
+        name="title"
+        placeholder="Nội dung công việc"
+        value="<%= todo.title %>"
+      />
+
+      <input
+        type="text"
+        name="completed"
+        placeholder="Trạng thái công việc"
+        value="<%= todo.completed %>"
+      />
+      <button type="submit">Lưu</button>
+    </form>
+  </body>
+</html>

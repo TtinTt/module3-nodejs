@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rikkei Academy</title>
+  </head>
+
+  <body>
+    <div>
+      <h1><%= title %></h1>
+      <a href="/products/new">Thêm mới</a>
+      <table>
+        <thead>
+          <th>ID</th>
+          <th>Tên đăng nhập</th>
+          <th>Email</th>
+          <th>Hành động</th>
+        </thead>
+        <tbody>
+          <% for (let product of products) { %>
+          <tr>
+            <td><%= product.id %></td>
+            <td><%= product.productname %></td>
+            <td><%= product.email %></td>
+            <td>
+              <a href="/products/<%= product.id %>/edit">Sửa</a>
+              <form
+                action="/products/<%= product.id %>?_method=DELETE"
+                method="POST"
+              >
+                <button type="submit">Xóa</button>
+              </form>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

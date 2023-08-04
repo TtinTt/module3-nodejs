@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rikkei Academy</title>
+  </head>
+
+  <body>
+    <h1>Chỉnh sửa sản phẩm</h1>
+    <a href="/products">Trở về danh sách</a>
+    <form method="POST" action="/products/<%= product.id %>?_method=PUT">
+      <input
+        type="text"
+        name="productname"
+        placeholder="Tên đăng nhập"
+        value="<%= product.productname %>"
+      />
+      <input
+        type="text"
+        name="email"
+        placeholder="Email"
+        value="<%= product.email %>"
+      />
+      <button type="submit">Lưu</button>
+    </form>
+  </body>
+</html>

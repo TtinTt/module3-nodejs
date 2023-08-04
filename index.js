@@ -4,6 +4,18 @@ import morgan from "morgan";
 import fs from "fs";
 import router from "./src/routes.js";
 import methodOverride from "method-override";
+import connection from "./src/connection.database.js";
+
+let user = [];
+
+connection.query("SELECT * FROM users LIMIT 3", (error, result) => {
+  if (error) {
+    console.log("Error: ", error);
+    throw error;
+  }
+  user = result;
+  console.log("result", user);
+});
 
 const app = express();
 

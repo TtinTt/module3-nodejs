@@ -1,12 +1,24 @@
-const http = require("http");
-const server = http.createServer((request, response) => {
-  response.writeHead(200, { "Content-Type": "text/html" });
+import fs from "fs";
+import express from "express";
+import bodyParser from "body-parser";
+import morgan from "morgan";
 
-  response.write("<h1>Hello Friend</h1>");
+import router from "./src/application/router.js";
 
-  response.end();
-});
+const app = express();
 
-server.listen(8080, "127.0.0.1", () => {
-  console.log("Máy chủ đã chạy, vui lòng truy cập http://127.0.0.1:8080 ");
+// Cấu hình body parser
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
+
+// Cấu hình morgan
+const accessLogStream = fs.createWriteStream("logs/access.log", { flags: "a" });
+app.use(morgan("combined", { stream: accessLogStream }));
+
+app.use("/", router);
+
+app.listen(8000, () => {
+  console.log("Server started");
 });

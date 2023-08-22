@@ -1,0 +1,5 @@
+node_modules/
+.vscode/
+logs/access.log
+upload/
+public/

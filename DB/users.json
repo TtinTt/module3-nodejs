@@ -1,0 +1,105 @@
+[
+    {
+        "email": "demoUser1@gmail.com",
+        "password": "demoUser1@gmail.com",
+        "name": "Trần Trọng Tín",
+        "cart": [
+            {
+                "id": "a256b54a-71c7-4304-b5c1-cfdd8aebb24f",
+                "name": "Dây Chuyền Gỗ Resin Hồ Quang Xanh Lam",
+                "img": [
+                    "https://i.etsystatic.com/12328946/r/il/21ac32/1542615660/il_1140xN.1542615660_1mu1.jpg",
+                    "https://i.etsystatic.com/12328946/r/il/862a8b/3977908583/il_794xN.3977908583_r5oo.jpg"
+                ],
+                "tag": ["Necklace"],
+                "price": "150000",
+                "comparative": "320000",
+                "sku": "",
+                "description": "Sản phẩm được làm thủ công, quá trình gia công tỉ mỉ và hoàn hảo tới từng chi tiết.",
+                "quantity": 1
+            },
+            {
+                "id": "f79d80ec-8c0b-4ab2-8bef-dc3bbe7ddddc",
+                "name": "Dây Chuyền Gỗ Resin Trắng Ngọc Trai",
+                "img": [
+                    "https://i.etsystatic.com/12328946/r/il/68f25f/1590520755/il_1140xN.1590520755_44um.jpg",
+                    "https://i.etsystatic.com/12328946/r/il/0285ba/3975842673/il_1140xN.3975842673_c8rs.jpg"
+                ],
+                "tag": ["Necklace"],
+                "price": "150000",
+                "comparative": "320000",
+                "sku": "",
+                "description": "Sản phẩm được làm thủ công, quá trình gia công tỉ mỉ và hoàn hảo tới từng chi tiết.",
+                "quantity": 1
+            },
+            {
+                "id": "ea2b9590-fda7-4612-bffe-e34991947582",
+                "name": "Dây Chuyền Gỗ Resin Xanh Ngọc",
+                "img": [
+                    "https://i.etsystatic.com/12328946/r/il/18dab6/3617508833/il_794xN.3617508833_gm3t.jpg",
+                    "https://i.etsystatic.com/12328946/r/il/c1205c/3719186320/il_794xN.3719186320_pj26.jpg"
+                ],
+                "tag": ["Necklace"],
+                "price": "150000",
+                "comparative": "320000",
+                "sku": "",
+                "description": "Sản phẩm được làm thủ công, quá trình gia công tỉ mỉ và hoàn hảo tới từng chi tiết.",
+                "quantity": 1
+            }
+        ],
+        "bday": "",
+        "date": "01:01 01/01/2021",
+        "status": true,
+        "add": "",
+        "phone": "0999999999",
+        "img": "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif"
+    },
+    {
+        "email": "demoUser2@gmail.com",
+        "password": "demoUser2@gmail.com",
+        "name": "Nguyễn Minh Tâm",
+        "cart": [],
+        "bday": "",
+        "date": "23:16 08/06/2023",
+        "status": true,
+        "add": "",
+        "phone": "",
+        "img": "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif"
+    },
+    {
+        "email": "demoUser3@gmail.com",
+        "password": "demoUser3@gmail.com",
+        "name": "Lê Tùng",
+        "cart": [],
+        "bday": "",
+        "date": "20:11 04/06/2023",
+        "status": true,
+        "add": "",
+        "phone": "",
+        "img": "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif"
+    },
+    {
+        "email": "demoUser4@gmail.com",
+        "password": "demoUser4@gmail.com",
+        "name": "",
+        "cart": [],
+        "bday": "",
+        "date": "12:11 04/08/2023",
+        "status": true,
+        "add": "",
+        "phone": "",
+        "img": "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif"
+    },
+    {
+        "email": "demoUser5@gmail.com",
+        "password": "demoUser3@gmail.com",
+        "name": "Lê Hải",
+        "cart": [],
+        "bday": "",
+        "date": "20:11 04/06/2021",
+        "status": false,
+        "add": "",
+        "phone": "",
+        "img": "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif"
+    }
+]

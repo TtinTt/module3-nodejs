@@ -1,14 +1,26 @@
-import userRepository from "./../repositories/user.repository.js";
+import productRepository from "../repositories/product.repository.js";
 import fs from "fs";
 import { getFileExtension } from "../../utilities/upload.util.js";
 
-const searchUsers = (params, callback) => {
+const searchProducts = (params, callback) => {
     if (params.limit && !/^[0-9]+$/.test(params.limit)) {
         callback({ message: "Limit phải là số" }, null);
     } else if (params.page && !/^[0-9]+$/.test(params.page)) {
         callback({ message: "Page phải là số" }, null);
+    } else if (
+        params.maxPrice &&
+        (!/^[0-9]+$/.test(params.maxPrice) || params.maxPrice == null)
+    ) {
+        callback({ message: "Limit phải là số" }, null);
+    } else if (
+        params.sortType &&
+        !(params.sortType == 0 || params.sortType == 1 || params.sortType == 2)
+    ) {
+        callback({ message: "Kiểu sắp xếp không hợp lệ" }, null);
+    } else if (params.category && params.category.length > 100) {
+        callback({ message: "Danh mục không hợp lệ" }, null);
     } else {
-        userRepository.searchUsers(params, (error, result) => {
+        productRepository.searchProducts(params, (error, result) => {
             if (error) {
                 callback(error, null);
             } else {
@@ -18,7 +30,17 @@ const searchUsers = (params, callback) => {
     }
 };
 
-const addUser = (requestBody, callback) => {
+const getPrice = (callback) => {
+    productRepository.getPrice((error, result) => {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, result);
+        }
+    });
+};
+
+const addProduct = (requestBody, callback) => {
     let originalname = null;
     let path = null;
 
@@ -30,14 +52,17 @@ const addUser = (requestBody, callback) => {
     const validate = (params) => {
         let errors = new Map();
 
-        // Validate username
-        if (!params.username) {
-            errors.set("username", "Tên đăng nhập không được bỏ trống.");
-        } else if (typeof params.username !== "string") {
-            errors.set("username", "Tên đăng nhập phải là chuỗi.");
-        } else if (params.username.length < 4 || params.username.length > 10) {
+        // Validate productname
+        if (!params.productname) {
+            errors.set("productname", "Tên đăng nhập không được bỏ trống.");
+        } else if (typeof params.productname !== "string") {
+            errors.set("productname", "Tên đăng nhập phải là chuỗi.");
+        } else if (
+            params.productname.length < 4 ||
+            params.productname.length > 10
+        ) {
             errors.set(
-                "username",
+                "productname",
                 "Tên đăng nhập chỉ cho phép 4 đến 10 ký tự."
             );
         }
@@ -86,6 +111,7 @@ const addUser = (requestBody, callback) => {
         } else if (params.role !== "1" && params.role !== "2") {
             errors.set("role", "Vai trò chỉ cho phép nhập 1 hoặc 2.");
         }
+
         return errors;
     };
 
@@ -96,29 +122,28 @@ const addUser = (requestBody, callback) => {
     } else {
         let avatar = null;
 
-        // if (requestBody.avatar) {
-        //     const avatarExtension = getFileExtension(originalname);
-        //     avatar = `avatar/${requestBody.username}.${avatarExtension}`;
-        //     const avatarLocation = `./public/${avatar}`;
+        if (requestBody.avatar) {
+            const avatarExtension = getFileExtension(originalname);
+            avatar = `avatar/${requestBody.productname}.${avatarExtension}`;
+            const avatarLocation = `./public/${avatar}`;
 
-        //     // Copy upload file to saving location
-        //     fs.cpSync(path, avatarLocation);
-        // }
+            // Copy upload file to saving location
+            fs.cpSync(path, avatarLocation);
+        }
 
-        const newUser = {
-            username: requestBody.username,
+        const newProduct = {
+            productname: requestBody.productname,
             email: requestBody.email,
             first_name: requestBody.first_name,
             last_name: requestBody.last_name,
             password: requestBody.password,
             role: requestBody.role,
-            avatar: "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif",
-            // avatar: avatar,
-            // created_by_id: requestBody.authId,
-            // updated_by_id: requestBody.authId,
+            avatar: avatar,
+            created_by_id: requestBody.authId,
+            updated_by_id: requestBody.authId,
         };
 
-        userRepository.addUser(newUser, (error, result) => {
+        productRepository.addProduct(newProduct, (error, result) => {
             if (path) {
                 fs.rmSync(path);
             }
@@ -131,15 +156,15 @@ const addUser = (requestBody, callback) => {
     }
 };
 
-const getDetailUser = (id, callback) => {
+const getDetailProduct = (id, callback) => {
     if (!/^[0-9]+$/.test(id)) {
         callback({ message: "ID phải là số" }, null);
     } else {
-        userRepository.getDetailUser(id, (error, result) => {
+        productRepository.getDetailProduct(id, (error, result) => {
             if (error) {
                 callback(error, null);
             } else if (result.length === 0) {
-                callback({ message: "User not found" }, null);
+                callback({ message: "Product not found" }, null);
             } else {
                 callback(null, result[0]);
             }
@@ -147,7 +172,7 @@ const getDetailUser = (id, callback) => {
     }
 };
 
-const updateUser = (userId, requestBody, callback) => {
+const updateProduct = (productId, requestBody, callback) => {
     let originalname = null;
     let path = null;
 
@@ -203,15 +228,15 @@ const updateUser = (userId, requestBody, callback) => {
 
         if (requestBody.avatar) {
             const avatarExtension = getFileExtension(originalname);
-            avatar = `avatar/${requestBody.username}.${avatarExtension}`;
+            avatar = `avatar/${requestBody.productname}.${avatarExtension}`;
             const avatarLocation = `./public/${avatar}`;
 
             // Copy upload file to saving location
             fs.cpSync(path, avatarLocation);
         }
 
-        const updateUser = {
-            username: requestBody.username,
+        const updateProduct = {
+            productname: requestBody.productname,
             email: requestBody.email,
             first_name: requestBody.first_name,
             last_name: requestBody.last_name,
@@ -221,28 +246,32 @@ const updateUser = (userId, requestBody, callback) => {
             updated_by_id: requestBody.authId,
         };
 
-        userRepository.updateUser(userId, updateUser, (error, result) => {
-            if (path) {
-                fs.rmSync(path);
+        productRepository.updateProduct(
+            productId,
+            updateProduct,
+            (error, result) => {
+                if (path) {
+                    fs.rmSync(path);
+                }
+                if (error) {
+                    callback(error, null);
+                } else {
+                    callback(null, result);
+                }
             }
-            if (error) {
-                callback(error, null);
-            } else {
-                callback(null, result);
-            }
-        });
+        );
     }
 };
 
-const deleteUser = (id, callback) => {
+const deleteProduct = (id, callback) => {
     if (!/^[0-9]+$/.test(id)) {
         callback({ message: "ID phải là số" }, null);
     } else {
-        userRepository.deleteUser(id, (error, result) => {
+        productRepository.deleteProduct(id, (error, result) => {
             if (error) {
                 callback(error, null);
             } else if (result.affectedRows === 0) {
-                callback({ message: "User not found" }, null);
+                callback({ message: "Product not found" }, null);
             } else {
                 callback(null, result);
             }
@@ -251,9 +280,10 @@ const deleteUser = (id, callback) => {
 };
 
 export default {
-    searchUsers,
-    addUser,
-    getDetailUser,
-    updateUser,
-    deleteUser,
+    getPrice,
+    searchProducts,
+    addProduct,
+    getDetailProduct,
+    updateProduct,
+    deleteProduct,
 };

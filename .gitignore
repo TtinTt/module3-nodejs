@@ -1,3 +1,11 @@
+<<<<<<< HEAD
 node_modules
 node_modules
 node_modules
+=======
+node_modules/
+.vscode/
+logs/access.log
+upload/
+public/
+>>>>>>> ebe60404362ca755f633f8bd7e48161b37f9a5d6

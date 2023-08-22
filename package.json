@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "crawlerdata",
   "version": "1.0.0",
   "type": "module",
@@ -18,4 +19,28 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.6"
   }
+=======
+    "name": "ra-module03",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "nodemon index.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "body-parser": "^1.20.2",
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "moment": "^2.29.4",
+        "morgan": "^1.10.0",
+        "multer": "^1.4.5-lts.1",
+        "mysql": "^2.18.1",
+        "nodemon": "^3.0.1"
+    }
+>>>>>>> ebe60404362ca755f633f8bd7e48161b37f9a5d6
 }

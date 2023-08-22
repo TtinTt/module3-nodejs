@@ -1,21 +1,21 @@
 {
-  "name": "module03",
+  "name": "crawlerdata",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "type": "module",
+  "description": "crawl data",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "quang phu",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.20.2",
-    "cheerio": "^1.0.0-rc.12",
-    "ejs": "^3.1.9",
-    "express": "^4.18.2",
-    "method-override": "^3.0.0",
-    "morgan": "^1.10.0",
+    "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.3",
+    "googleapis": "^123.0.0",
+    "node-fetch": "^3.3.2",
+    "puppeteer": "^21.0.1",
+    "request": "^2.88.2",
     "request-promise": "^4.2.6"
   }
 }

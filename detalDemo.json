@@ -1,0 +1,35 @@
+[
+  {
+    "url": "https://www.desariodesign.com/products/detroit-lions-3d-hoodie-hd1182",
+    "title": "Detroit Lions 3D Hoodie HD1182",
+    "price": "37.95",
+    "priceCompare": "49.95",
+    "ProductIMG": [
+      "https://minio.lattehub.com/img/2000/0/resize/641d6d4a00bd6400096aeea0/2023/05/31/latte-image-6476d56691815c8d73dfa7be.png"
+    ],
+    "description": "<div class=\"\" data-v-3d27a034=\"\" style=\"color: rgb(102, 102, 102);\"><ul style=\"list-style-type: disc;\">\n<li>Healthy fabric 100% polyester with milk silk inner fabric.</li>\n<li>Double-needle top-stitched neckline.</li>\n<li>Double-stitched sleeve and waist hems.</li>\n<li>Seamless collar with taped neck and shoulders.</li>\n<li>Quarter-turned body to eliminate the center crease. The design is printed with new age printing technology, direct to garment. It is printed with a water – soluble and eco – friendly ink. It is cured with a heat treatment process to ensure the color-fastness and lasting durability of the design.</li>\n<li>Suitable for men/ women/ boy/ girl/ teenager/ couple. Can used Daily, Casual, Party, Outdoor, Sport, Travel,School ,Halloween etc in every season.</li>\n<li>Size:&nbsp;S, M, L, XL, XXL, 3XL, 4XL, 5XL. Please check the size chart and measuring instruction carefully before placing order as we&nbsp;<strong>CAN NOT</strong>&nbsp;offer return or refund if you choose the wrong size.</li>\n</ul>\n<p><strong>NOTE:</strong></p>\n<ul style=\"list-style-type: none;\">\n<li>Due to manual measurement, some size difference (2-4 cm) is unavoidable. Please be tolerant!</li>\n<li>The actual color may be slightly different from the image due to different monitor and light effects</li>\n</ul></div>",
+    "options": {
+      "Type:": ["Hoodie", "Zip-up Hoodie"],
+      "Size:": ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"]
+    },
+    "customOptions": { "Personalized (Optional):": "Add Name Here" },
+    "type": "Hoodie",
+    "typeGroup": "Clothes",
+    "league": "NFL",
+    "team": "DETROIT LIONS"
+  },
+  {
+    "url": "https://www.desariodesign.com/products/goofy-dog-orange-black-disney-unisex-cartoon-graphic-casual-outfits-custom-baseball-jersey",
+    "title": "Goofy Dog Orange Black | Disney Unisex Cartoon Graphic Casual Outfits | Custom Baseball Jersey",
+    "price": "37.95",
+    "priceCompare": "42.95",
+    "ProductIMG": ["link1", "link2", "link3", "link4"],
+    "description": "<div class=\"\" data-v-3d27a034=\"\" style=\"color: rgb(102, 102, 102);\"><p><strong>Make your sporty items become more peculiar and fashionable with this Baseball Jersey</strong></p>\n<ul style=\"list-style-type: disc;\">\n<li>Each of our baseball jersey is custom-made to order and handcrafted to the highest quality standards.</li>\n<li>100% Bird’s Eye Pique Fabric, offers outstanding durability, insulation, and wrinkle resistance.</li>\n<li>Machine wash in cold with similar colors/no bleach/low iron.</li>\n<li>Breathable, durable, and easy to care for, polyester is the ideal material for athletes everywhere.</li>\n<li>Moisture-wicking.</li>\n<li>Full Button Down Closure.</li>\n<li>Comfortable Soft Feel.</li>\n<li>Great for groups: school uniforms, baseball team, easy to customize.</li>\n</ul>\n<p>&nbsp;</p></div>",
+    "options": { "Size:": ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"] },
+    "customOptions": { "Personalized (Optional):": "Add Name Here" },
+    "type": "Baseball Jersey",
+    "typeGroup": "Clothes",
+    "league": null,
+    "team": null
+  }
+]

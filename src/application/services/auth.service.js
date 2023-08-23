@@ -1,6 +1,7 @@
 import userRepository from "../repositories/user.repository.js";
 import { comparePassword } from "../../utilities/hash.util.js";
 import { randomString } from "../../utilities/string.util.js";
+import authRepository from "../repositories/auth.repository.js";
 
 const login = (params, callback) => {
     const { username, password, type } = params;
@@ -95,13 +96,13 @@ const logout = (authId, callback) => {
 };
 
 const register = (params, callback) => {
-    let originalname = null;
-    let path = null;
+    // let originalname = null;
+    // let path = null;
 
-    if (requestBody.avatar) {
-        originalname = requestBody.avatar.originalname;
-        path = requestBody.avatar.path;
-    }
+    // if (requestBody.avatar) {
+    //     originalname = requestBody.avatar.originalname;
+    //     path = requestBody.avatar.path;
+    // }
 
     const validate = (params) => {
         let errors = new Map();
@@ -161,6 +162,14 @@ const register = (params, callback) => {
         // }
         return errors;
     };
+
+    // console.log(params);
+    const errors = validate(params);
+    if (errors.size > 0) {
+        return callback({ errors: [...errors.values()] }, null);
+    } else {
+        authRepository.register(params, callback);
+    }
 };
 
 export default {

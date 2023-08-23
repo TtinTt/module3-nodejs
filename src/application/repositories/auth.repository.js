@@ -60,6 +60,8 @@ const register = (user, callback) => {
     const userToCreate = {
         ...user,
         password: encryptPassword(user.password),
+        status: true,
+        img: "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif",
         // created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
         // updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
     };
@@ -70,8 +72,15 @@ const register = (user, callback) => {
         (error, result) => {
             if (error) {
                 callback(error, null);
+                console.log(error);
             } else {
                 callback(null, result);
+                console.log(
+                    "đã thêm user",
+                    user.email,
+                    " password",
+                    user.password
+                );
             }
         }
     );

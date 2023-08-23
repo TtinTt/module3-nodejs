@@ -46,9 +46,9 @@ const logout = (request, response) => {
 
 const register = (request, response) => {
     const requestBody = request.body;
+    // console.log("requestBody", requestBody);
     // const avatar =
-    //     request.file ||
-    //     "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif";
+    //     request.file
     // userService.addUser(
     //     {
     //         ...requestBody,
@@ -63,11 +63,18 @@ const register = (request, response) => {
         },
         (error, result) => {
             if (error) {
-                response.status(500).send({
-                    error: error,
-                });
+                if (error.code == "ER_DUP_ENTRY") {
+                    response.status(403).send({
+                        error: error,
+                    });
+                } else {
+                    response.status(500).send({
+                        error: error,
+                    });
+                }
             } else {
                 response.status(201).send();
+                // console.log(result);
             }
         }
     );

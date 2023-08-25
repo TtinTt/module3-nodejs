@@ -112,6 +112,7 @@ const addUser = (requestBody, callback) => {
             last_name: requestBody.last_name,
             password: requestBody.password,
             role: requestBody.role,
+            cart: [],
             avatar: "https://www.getillustrations.com/photos/pack/video/55895-3D-AVATAR-ANIMATION.gif",
             // avatar: avatar,
             // created_by_id: requestBody.authId,
@@ -146,7 +147,19 @@ const getDetailUser = (id, callback) => {
         });
     }
 };
+const isArrayContainingObjects = (obj) => {
+    if (!Array.isArray(obj)) {
+        return false;
+    }
 
+    for (let item of obj) {
+        if (typeof item !== "object" || item === null || Array.isArray(item)) {
+            return false;
+        }
+    }
+
+    return true;
+};
 const updateUser = (userId, requestBody, callback) => {
     let originalname = null;
     let path = null;
@@ -159,36 +172,40 @@ const updateUser = (userId, requestBody, callback) => {
     const validate = (params) => {
         let errors = new Map();
 
-        // Validate first name
-        if (typeof params.first_name !== "string") {
-            errors.set("first_name", "Họ phải là chuỗi.");
-        } else if (params.first_name && params.first_name.length > 50) {
-            errors.set("first_name", "Họ chỉ cho phép dưới 50 ký tự.");
+        // Validate cart
+        if (
+            params.hasOwnProperty("cart") &&
+            !params.cart == [] &&
+            !isArrayContainingObjects(params.cart)
+        ) {
+            errors.set("cart", "Giỏ hàng không hợp lệ.");
         }
 
-        // Validate last name
-        if (typeof params.last_name !== "string") {
-            errors.set("last_name", "Tên phải là chuỗi.");
+        // Validate name
+        if (params.hasOwnProperty("name") && typeof params.name !== "string") {
+            errors.set("name", "Tên phải là chuỗi.");
         } else if (params.first_name && params.first_name.length > 50) {
-            errors.set("last_name", "Tên chỉ cho phép dưới 50 ký tự.");
+            errors.set("name", "Tên chỉ cho phép dưới 50 ký tự.");
         }
 
         // Validate password
-        if (params.password) {
-            if (typeof params.password !== "string") {
-                errors.set("password", "Mật khẩu phải là chuỗi.");
-            } else if (params.password < 8 || params.password.length > 20) {
-                errors.set(
-                    "password",
-                    "Mật khẩu chỉ cho phép từ 8 đến 20 ký tự."
-                );
-            }
-        }
-
-        if (typeof params.role !== "string") {
-            errors.set("role", "Vai trò phải là chuỗi.");
-        } else if (params.role !== "1" && params.role !== "2") {
-            errors.set("role", "Vai trò chỉ cho phép nhập 1 hoặc 2.");
+        if (
+            params.hasOwnProperty("password") &&
+            (params.password.length < 6 || params.password.length > 200)
+        ) {
+            errors.set("password", "Mật khẩu cần có độ dài 6 tới 200 ký tự");
+        } else if (
+            params.hasOwnProperty("password") &&
+            !(
+                params.password.match(/[a-z]/) &&
+                params.password.match(/[A-Z]/) &&
+                params.password.match(/\d/)
+            )
+        ) {
+            errors.set(
+                "password",
+                "Mật khẩu cần bao gồm ký tự IN HOA, chữ thường và chữ số"
+            );
         }
 
         return errors;
@@ -203,7 +220,7 @@ const updateUser = (userId, requestBody, callback) => {
 
         if (requestBody.avatar) {
             const avatarExtension = getFileExtension(originalname);
-            avatar = `avatar/${requestBody.username}.${avatarExtension}`;
+            avatar = `avatar/${userId}.${avatarExtension}`;
             const avatarLocation = `./public/${avatar}`;
 
             // Copy upload file to saving location
@@ -211,14 +228,14 @@ const updateUser = (userId, requestBody, callback) => {
         }
 
         const updateUser = {
-            username: requestBody.username,
-            email: requestBody.email,
-            first_name: requestBody.first_name,
-            last_name: requestBody.last_name,
+            name: requestBody.name,
+            bday: requestBody.bday,
             password: requestBody.password,
-            role: requestBody.role,
-            avatar: avatar,
-            updated_by_id: requestBody.authId,
+            add_address: requestBody.add_address,
+            phone: requestBody.phone,
+            img: avatar,
+            cart: requestBody.cart,
+            status: requestBody.status, //TODO check quyền admin
         };
 
         userRepository.updateUser(userId, updateUser, (error, result) => {

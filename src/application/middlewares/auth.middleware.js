@@ -14,6 +14,8 @@ export default function (request, response, next) {
         next();
     } else {
         const apiKey = request.header("X-API-Key");
+        console.log("request.body", request.body);
+        console.log("request.params", request.params);
 
         console.log("auth middleware", apiKey);
         if (!apiKey) {

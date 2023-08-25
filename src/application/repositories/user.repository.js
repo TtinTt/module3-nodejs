@@ -83,12 +83,35 @@ const getDetailUser = (id, callback) => {
     const connection = getConnection();
 
     connection.query(
-        "SELECT user_id, username, email, first_name, last_name, role, avatar, created_at, created_by_id, updated_at, updated_by_id FROM users WHERE user_id = ?",
+        "SELECT user_id, email, name, bday, date, status, add_address, phone, img, JSON_EXTRACT(cart, '$[*]') AS cart FROM users WHERE user_id = ?",
         [id],
         (error, result) => {
             if (error) {
                 callback(error, null);
             } else {
+                for (let i = 0; i < result.length; i++) {
+                    if (result[i].cart) {
+                        result[i].cart = JSON.parse(result[i].cart);
+
+                        // Chuyển đổi các thuộc tính trong cart thành số nguyên
+                        for (let item of result[i].cart) {
+                            if (item.comparative) {
+                                item.comparative = parseInt(
+                                    item.comparative,
+                                    10
+                                );
+                            }
+                            if (item.price) {
+                                item.price = parseInt(item.price, 10);
+                            }
+                            if (item.quantity) {
+                                item.quantity = parseInt(item.quantity, 10);
+                            }
+                        }
+                    } else {
+                        result[i].cart = [];
+                    }
+                }
                 callback(null, result);
             }
         }
@@ -97,23 +120,21 @@ const getDetailUser = (id, callback) => {
     connection.end();
 };
 
-const getUserByUsernameAndRole = (username, role, callback) => {
+const getUserByUsernameAndRole = (email, callback) => {
     const connection = getConnection();
+    // let table = "users";
 
     connection.query(
         `
       SELECT
         user_id,
-        username,
         email,
-        password,
-        role
+        password
       FROM users
       WHERE
-        username = ?
-        AND role = ?
+        email = ?
     `,
-        [username, role],
+        [email],
         (error, result) => {
             if (error) {
                 callback(error, null);
@@ -128,30 +149,43 @@ const getUserByUsernameAndRole = (username, role, callback) => {
 
 const getUserByApiKey = (apiKey, callback) => {
     const connection = getConnection();
-
+    // console.log("apiKey", apiKey);
+    // connection.query(
+    //     `
+    //   SELECT user_id, email, name, bday, date, status, add_address, phone, img, JSON_EXTRACT(cart, '$[*]') AS cart FROM users WHERE api_key = ?
+    // `,
     connection.query(
         `
-      SELECT
-        user_id,
-        username,
-        email,
-        first_name,
-        last_name,
-        role,
-        avatar,
-        created_at,
-        created_by_id,
-        updated_at,
-        updated_by_id
-      FROM users
-      WHERE
-        api_key = ?
+      SELECT user_id , email, name, bday, date, status, add_address, phone, img, JSON_EXTRACT(cart, '$[*]') AS cart FROM users WHERE api_key = ?
     `,
         [apiKey],
         (error, result) => {
             if (error) {
                 callback(error, null);
             } else {
+                for (let i = 0; i < result.length; i++) {
+                    if (result[i].cart) {
+                        result[i].cart = JSON.parse(result[i].cart);
+
+                        // Chuyển đổi các thuộc tính trong cart thành số nguyên
+                        for (let item of result[i].cart) {
+                            if (item.comparative) {
+                                item.comparative = parseInt(
+                                    item.comparative,
+                                    10
+                                );
+                            }
+                            if (item.price) {
+                                item.price = parseInt(item.price, 10);
+                            }
+                            if (item.quantity) {
+                                item.quantity = parseInt(item.quantity, 10);
+                            }
+                        }
+                    } else {
+                        result[i].cart = [];
+                    }
+                }
                 callback(null, result);
             }
         }
@@ -180,23 +214,54 @@ const createApiKey = (userId, apiKey, callback) => {
 
 const updateUser = (userId, params, callback) => {
     const connection = getConnection();
+    console.log(params);
+    let sql = "UPDATE users SET cart = ?";
 
-    let sql =
-        "UPDATE users SET first_name = ?, last_name = ?, role = ?, updated_by_id = ?";
-    let bindParams = [
-        params.first_name,
-        params.last_name,
-        params.role,
-        params.updated_by_id,
-    ];
+    // if (params.cart) {
+    //     sql += ", ";
+    //     ;
+    // }
+
+    let bindParams = [];
+    if (params.cart) {
+        bindParams.push(JSON.stringify(params.cart));
+    } else {
+        bindParams.push("[]");
+    }
+
+    if (params.name) {
+        sql += ", name = ?";
+        bindParams.push(params.name);
+    }
+
+    if (params.bday) {
+        sql += ", bday = ?";
+        bindParams.push(params.bday);
+    }
+
+    if (params.add_address) {
+        sql += ", add_address = ?";
+        bindParams.push(params.add_address);
+    }
+
+    if (params.phone) {
+        sql += ", phone = ?";
+        bindParams.push(params.phone);
+    }
 
     if (params.password) {
         sql += ", password = ?";
         bindParams.push(encryptPassword(params.password));
     }
-    if (params.avatar) {
-        sql += ", avatar = ?";
-        bindParams.push(params.avatar);
+
+    if (params.img) {
+        sql += ", img = ?";
+        bindParams.push(params.img);
+    }
+    if (params.status) {
+        //TODO check quyền admin
+        sql += ", status = ?";
+        bindParams.push(params.status);
     }
 
     sql += " WHERE user_id = ?";

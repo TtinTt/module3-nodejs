@@ -4,7 +4,7 @@ const login = (request, response) => {
     const requestBody = request.body;
 
     const params = {
-        username: requestBody.username,
+        email: requestBody.email,
         password: requestBody.password,
         type: requestBody.type,
     };

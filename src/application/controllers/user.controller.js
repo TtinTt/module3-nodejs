@@ -1,7 +1,7 @@
 import userService from "./../services/user.service.js";
 
 const searchUsers = (request, response) => {
-    if (request.auth.role !== 1) {
+    if (!request.authAdmin.admin_id) {
         response.status(403).send({
             error: "Không có quyền truy cập.",
         });
@@ -9,10 +9,10 @@ const searchUsers = (request, response) => {
         return;
     }
 
-    const { name, page, limit } = request.query;
+    const { name, page, limit, sortType } = request.query;
 
     userService.searchUsers(
-        { name: name, page: page, limit: limit },
+        { name: name, page: page, limit: limit, sortType: sortType },
         (error, result) => {
             if (error) {
                 response.status(500).send({

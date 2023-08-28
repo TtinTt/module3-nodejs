@@ -7,6 +7,15 @@ const searchUsers = (params, callback) => {
         callback({ message: "Limit phải là số" }, null);
     } else if (params.page && !/^[0-9]+$/.test(params.page)) {
         callback({ message: "Page phải là số" }, null);
+    } else if (params.name && typeof params.name !== "string") {
+        callback({ message: "Name phải là chuỗi" }, null);
+    } else if (
+        params.sortType &&
+        params.sortType !== "0" &&
+        params.sortType !== "1" &&
+        params.sortType !== "2"
+    ) {
+        callback({ message: "Kiểu sắp xếp không hợp lệ" }, null);
     } else {
         userRepository.searchUsers(params, (error, result) => {
             if (error) {

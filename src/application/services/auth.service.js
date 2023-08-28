@@ -6,7 +6,7 @@ import adminRepository from "../repositories/admin.repository.js";
 const login = (params, callback) => {
     const { email, password, type } = params;
     // TODO: Validate
-    if (!(email & password) & !(type == "admin" || type == "customer")) {
+    if (!(email && password) && !(type == "admin" || type == "customer")) {
         callback(
             {
                 code: 500,
@@ -26,6 +26,7 @@ const login = (params, callback) => {
                     },
                     null
                 );
+                return;
             } else if (result.length === 0) {
                 callback(
                     {
@@ -34,6 +35,7 @@ const login = (params, callback) => {
                     },
                     null
                 );
+                return;
             } else {
                 const user = result[0];
 
@@ -45,6 +47,7 @@ const login = (params, callback) => {
                         },
                         null
                     );
+                    return;
                 } else {
                     const apiKey = user.user_id + randomString(128);
 
@@ -60,11 +63,13 @@ const login = (params, callback) => {
                                     },
                                     null
                                 );
+                                return;
                             } else {
                                 callback(null, {
                                     token: result,
                                 });
                             }
+                            return;
                         }
                     );
                 }
@@ -81,6 +86,7 @@ const login = (params, callback) => {
                     },
                     null
                 );
+                return;
             } else if (result.length === 0) {
                 callback(
                     {
@@ -89,6 +95,7 @@ const login = (params, callback) => {
                     },
                     null
                 );
+                return;
             } else {
                 const admin = result[0];
 
@@ -100,6 +107,7 @@ const login = (params, callback) => {
                         },
                         null
                     );
+                    return;
                 } else {
                     const apiKeyAdmin = admin.admin_id + randomString(128);
 
@@ -115,11 +123,13 @@ const login = (params, callback) => {
                                     },
                                     null
                                 );
+                                return;
                             } else {
                                 callback(null, {
                                     token: result,
                                 });
                             }
+                            return;
                         }
                     );
                 }
@@ -181,8 +191,6 @@ const getAuth = (userId, adminId, callback) => {
         });
     });
 };
-
-
 
 const logout = (authId, callback) => {
     userRepository.createApiKey(authId, null, (error, result) => {

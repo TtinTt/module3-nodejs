@@ -3,54 +3,79 @@ import getConnection from "./../../config/connection.database.js";
 import { encryptPassword } from "../../utilities/hash.util.js";
 
 const searchUsers = (params, callback) => {
+    const bindParams = [];
     const connection = getConnection();
 
-    let sql = " FROM users";
-    const bindParams = [];
-
     const page = params.page || 1;
-    const limit = params.limit || 5;
-
+    const limit = params.limit || 10;
     const offset = (page - 1) * limit;
+    const name = params.name || null;
+    const checkSortType = parseInt(params.sortType);
+    let sortType = null;
+    if (checkSortType !== 2) {
+        sortType = checkSortType;
+    }
+    let baseSql = " FROM users";
 
-    if (params.name) {
-        const name = "%" + params.name + "%";
-        sql += " WHERE username LIKE ?";
-        bindParams.push(name);
+    let whereAdded = false;
+
+    if (name) {
+        baseSql += " WHERE (email LIKE ? OR name LIKE ? OR phone LIKE ?)";
+        bindParams.push("%" + name + "%");
+        bindParams.push("%" + name + "%");
+        bindParams.push("%" + name + "%");
+        whereAdded = true;
     }
 
-    const countQuery = "SELECT COUNT(1) AS total" + sql;
+    console.log("sortType", sortType);
+    switch (sortType) {
+        case 1:
+            baseSql += whereAdded ? " AND " : " WHERE ";
+            baseSql += "status = 1";
+            whereAdded = true;
+            break;
+        case 0:
+            baseSql += whereAdded ? " AND " : " WHERE ";
+            baseSql += "status = 0";
+            whereAdded = true;
+            break;
+    }
+
+    const countQuery = "SELECT COUNT(*) AS total" + baseSql;
 
     connection.query(countQuery, bindParams, (error, countResult) => {
         if (error) {
+            console.log(error);
             callback(error, null);
-        } else if (countResult[0].total !== 0) {
-            const selectColumnsQuery =
-                "SELECT user_id, username, email, first_name, last_name, role, avatar, created_at, created_by_id, updated_at, updated_by_id" +
-                sql +
-                ` LIMIT ${limit} OFFSET ${offset}`;
-            connection.query(
-                selectColumnsQuery,
-                bindParams,
-                (error, result) => {
-                    if (error) {
-                        callback(error, null);
-                    } else {
-                        callback(null, {
-                            total: countResult[0].total,
-                            records: result,
-                        });
-                    }
-                }
-            );
-            connection.end();
-        } else {
+            return;
+        }
+
+        if (countResult[0].total === 0) {
             callback(null, {
                 total: 0,
                 records: [],
             });
             connection.end();
+            return;
         }
+
+        const selectColumnsQuery =
+            "SELECT user_id, email, name, bday, date, status, add_address, phone, img " +
+            baseSql +
+            ` LIMIT ${limit} OFFSET ${offset}`;
+
+        connection.query(selectColumnsQuery, bindParams, (error, users) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+
+            callback(null, {
+                total: countResult[0].total,
+                records: users,
+            });
+            connection.end();
+        });
     });
 };
 

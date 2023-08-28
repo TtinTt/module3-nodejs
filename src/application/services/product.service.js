@@ -40,6 +40,16 @@ const getPrice = (callback) => {
     });
 };
 
+const getTag = (callback) => {
+    productRepository.getTag((error, result) => {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, result);
+        }
+    });
+};
+
 const addProduct = (requestBody, callback) => {
     let originalname = null;
     let path = null;
@@ -281,6 +291,7 @@ const deleteProduct = (id, callback) => {
 
 export default {
     getPrice,
+    getTag,
     searchProducts,
     addProduct,
     getDetailProduct,

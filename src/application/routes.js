@@ -30,7 +30,7 @@ router.delete("/users/:id", userController.deleteUser);
 // Product management
 router.get("/products", productController.searchProducts);
 router.get("/products/price", productController.getPrice);
-
+router.get("/products/tag", productController.getTag);
 // router.post("/products", upload.single("avatar"), productController.addProduct);
 // router.get("/products/:id", productController.getDetailProduct);
 // router.put(
@@ -41,7 +41,7 @@ router.get("/products/price", productController.getPrice);
 // router.delete("/products/:id", productController.deleteProduct);
 
 // Order management
-// router.get("/orders", orderController.searchOrders);
+router.get("/orders", orderController.searchOrders);
 router.post("/orders", orderController.addOrder);
 router.get("/orders/:email", orderController.getOrderByUserEmail);
 

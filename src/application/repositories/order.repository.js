@@ -2,57 +2,88 @@ import moment from "moment";
 import getConnection from "../../config/connection.database.js";
 import { encryptPassword } from "../../utilities/hash.util.js";
 
-// const searchOrders = (params, callback) => {
-//     const connection = getConnection();
+const searchOrders = (params, callback) => {
+    const bindParams = [];
+    const connection = getConnection();
 
-//     let sql = " FROM orders";
-//     const bindParams = [];
+    const page = params.page || 1;
+    const limit = params.limit || 10;
+    const offset = (page - 1) * limit;
+    const name = params.name || null;
+    const sortType = parseInt(params.sortType) || 0;
 
-//     const page = params.page || 1;
-//     const limit = params.limit || 5;
+    let baseSql = " FROM orders";
 
-//     const offset = (page - 1) * limit;
+    let whereAdded = false;
 
-//     if (params.name) {
-//         const name = "%" + params.name + "%";
-//         sql += " WHERE ordername LIKE ?";
-//         bindParams.push(name);
-//     }
+    if (name) {
+        baseSql +=
+            " WHERE (email LIKE ? OR JSON_EXTRACT(address_json, '$.name') LIKE ? OR JSON_EXTRACT(address_json, '$.phoneNumber') LIKE ?)";
+        bindParams.push("%" + name + "%");
+        bindParams.push("%" + name + "%");
+        bindParams.push("%" + name + "%");
+        whereAdded = true;
+    }
 
-//     const countQuery = "SELECT COUNT(1) AS total" + sql;
+    switch (sortType) {
+        case 1:
+            baseSql += whereAdded ? " AND " : " WHERE ";
+            baseSql += "status IN (0, 1, 2, 4)";
+            whereAdded = true;
+            break;
+        case 2:
+            baseSql += whereAdded ? " AND " : " WHERE ";
+            baseSql += "status IN (-1, -2, 3, 5)";
+            whereAdded = true;
+            break;
+    }
 
-//     connection.query(countQuery, bindParams, (error, countResult) => {
-//         if (error) {
-//             callback(error, null);
-//         } else if (countResult[0].total !== 0) {
-//             const selectColumnsQuery =
-//                 "SELECT order_id, ordername, email, first_name, last_name, role, avatar, created_at, created_by_id, updated_at, updated_by_id" +
-//                 sql +
-//                 ` LIMIT ${limit} OFFSET ${offset}`;
-//             connection.query(
-//                 selectColumnsQuery,
-//                 bindParams,
-//                 (error, result) => {
-//                     if (error) {
-//                         callback(error, null);
-//                     } else {
-//                         callback(null, {
-//                             total: countResult[0].total,
-//                             records: result,
-//                         });
-//                     }
-//                 }
-//             );
-//             connection.end();
-//         } else {
-//             callback(null, {
-//                 total: 0,
-//                 records: [],
-//             });
-//             connection.end();
-//         }
-//     });
-// };
+    const countQuery = "SELECT COUNT(*) AS total" + baseSql;
+
+    connection.query(countQuery, bindParams, (error, countResult) => {
+        if (error) {
+            console.log(error);
+            callback(error, null);
+            return;
+        }
+
+        if (countResult[0].total === 0) {
+            callback(null, {
+                total: 0,
+                records: [],
+            });
+            connection.end();
+            return;
+        }
+
+        const selectColumnsQuery =
+            "SELECT * " + baseSql + ` LIMIT ${limit} OFFSET ${offset}`;
+
+        connection.query(selectColumnsQuery, bindParams, (error, orders) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+
+            // Convert cart_json and address_json from string to object
+            const parsedOrders = orders.map((order) => {
+                return {
+                    ...order,
+                    cart: order.cart_json ? JSON.parse(order.cart_json) : null,
+                    address: order.address_json
+                        ? JSON.parse(order.address_json)
+                        : null,
+                };
+            });
+
+            callback(null, {
+                total: countResult[0].total,
+                records: parsedOrders,
+            });
+            connection.end();
+        });
+    });
+};
 
 const addOrder = (order, callback) => {
     const connection = getConnection();
@@ -306,7 +337,7 @@ const updateOrder = (orderId, updateOrder, callback) => {
 // };
 
 export default {
-    // searchOrders,
+    searchOrders,
     addOrder,
     getOrderByUserEmail,
     // getDetailOrder,

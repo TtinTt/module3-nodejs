@@ -21,14 +21,24 @@ const login = (request, response) => {
 };
 
 const getAuth = (request, response) => {
-    authService.getAuth(request.auth.user_id, (error, result) => {
+    const userId = request.auth?.user_id;
+    const adminId = request.authAdmin?.admin_id;
+
+    // Nếu cả hai đều không tồn tại, trả về lỗi
+    if (!userId && !adminId) {
+        return response.status(400).send({
+            error: "Thiếu thông tin xác thực.",
+        });
+    }
+
+    // Gọi dịch vụ với userId và/hoặc adminId
+    authService.getAuth(userId, adminId, (error, result) => {
         if (error) {
-            response.status(401).send({
-                error: error,
+            return response.status(500).send({
+                error: "Lỗi khi xác thực.",
             });
-        } else {
-            response.send(result);
         }
+        response.send(result);
     });
 };
 

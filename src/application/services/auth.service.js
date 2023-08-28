@@ -2,7 +2,7 @@ import userRepository from "../repositories/user.repository.js";
 import { comparePassword } from "../../utilities/hash.util.js";
 import { randomString } from "../../utilities/string.util.js";
 import authRepository from "../repositories/auth.repository.js";
-
+import adminRepository from "../repositories/admin.repository.js";
 const login = (params, callback) => {
     const { email, password, type } = params;
     // TODO: Validate
@@ -71,18 +71,118 @@ const login = (params, callback) => {
             }
         });
 
-    // thêm type == "admin"
+    type == "admin" &&
+        adminRepository.getAdminByUsernameAndRole(email, (error, result) => {
+            if (error) {
+                callback(
+                    {
+                        code: 500,
+                        message: error.message,
+                    },
+                    null
+                );
+            } else if (result.length === 0) {
+                callback(
+                    {
+                        code: 401,
+                        message: "User not found",
+                    },
+                    null
+                );
+            } else {
+                const admin = result[0];
+
+                if (!comparePassword(password, admin.password)) {
+                    callback(
+                        {
+                            code: 401,
+                            message: "Sai mật khẩu",
+                        },
+                        null
+                    );
+                } else {
+                    const apiKeyAdmin = admin.admin_id + randomString(128);
+
+                    adminRepository.createApiKey(
+                        admin.admin_id,
+                        apiKeyAdmin,
+                        (error, result) => {
+                            if (error) {
+                                callback(
+                                    {
+                                        code: 500,
+                                        message: error.message,
+                                    },
+                                    null
+                                );
+                            } else {
+                                callback(null, {
+                                    token: result,
+                                });
+                            }
+                        }
+                    );
+                }
+            }
+        });
 };
 
-const getAuth = (authId, callback) => {
-    userRepository.getDetailUser(authId, (error, result) => {
-        if (error) {
-            callback(error, null);
+const getAuth = (userId, adminId, callback) => {
+    // Nếu không có userId và adminId
+    if (!userId && !adminId) {
+        return callback(new Error("Không có thông tin xác thực."), null);
+    }
+
+    // Đối tượng chứa kết quả từ cả hai repository
+    let verify = {};
+
+    const processUser = (done) => {
+        if (userId) {
+            userRepository.getDetailUser(userId, (error, result) => {
+                if (error) {
+                    done(error);
+                } else {
+                    verify.user = result[0];
+                    done();
+                }
+            });
         } else {
-            callback(null, result[0]);
+            done();
         }
+    };
+
+    const processAdmin = (done) => {
+        if (adminId) {
+            adminRepository.getDetailAdmin(adminId, (error, result) => {
+                if (error) {
+                    done(error);
+                } else {
+                    verify.admin = result[0];
+                    done();
+                }
+            });
+        } else {
+            done();
+        }
+    };
+
+    // Lần lượt thực hiện xử lý user và admin
+    processUser((userError) => {
+        if (userError) {
+            return callback(userError, null);
+        }
+
+        processAdmin((adminError) => {
+            if (adminError) {
+                return callback(adminError, null);
+            }
+
+            callback(null, verify);
+        });
     });
 };
+
+
 
 const logout = (authId, callback) => {
     userRepository.createApiKey(authId, null, (error, result) => {

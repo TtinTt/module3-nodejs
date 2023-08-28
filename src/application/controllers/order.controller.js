@@ -1,29 +1,29 @@
 import orderService from "../services/order.service.js";
 
-// const searchOrders = (request, response) => {
-//     if (request.auth.role !== 1) {
-//         response.status(403).send({
-//             error: "Không có quyền truy cập.",
-//         });
+const searchOrders = (request, response) => {
+    if (!request.authAdmin.admin_id) {
+        response.status(403).send({
+            error: "Không có quyền truy cập.",
+        });
 
-//         return;
-//     }
+        return;
+    }
 
-//     const { name, page, limit } = request.query;
+    const { name, page, limit, sortType } = request.query;
 
-//     orderService.searchOrders(
-//         { name: name, page: page, limit: limit },
-//         (error, result) => {
-//             if (error) {
-//                 response.status(500).send({
-//                     error: error.message,
-//                 });
-//             } else {
-//                 response.send(result);
-//             }
-//         }
-//     );
-// };
+    orderService.searchOrders(
+        { name: name, page: page, limit: limit, sortType: sortType },
+        (error, result) => {
+            if (error) {
+                response.status(500).send({
+                    error: error.message,
+                });
+            } else {
+                response.send(result);
+            }
+        }
+    );
+};
 
 const addOrder = (request, response) => {
     console.log(request.body);
@@ -127,7 +127,7 @@ const updateOrder = (request, response) => {
 // };
 
 export default {
-    // searchOrders,
+    searchOrders,
     getOrderByUserEmail,
     addOrder,
     // getDetailOrder,

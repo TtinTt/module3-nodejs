@@ -175,6 +175,44 @@ const getPrice = (callback) => {
     });
 };
 
+const getTag = (callback) => {
+    const connection = getConnection();
+
+    const tagQuery = `
+        SELECT DISTINCT tag 
+        FROM (
+            SELECT pt.tag, 
+                   ROW_NUMBER() OVER(PARTITION BY pt.product_id ORDER BY pt.tag_id ASC) as rn 
+            FROM product_tags pt
+        ) as tmp
+        WHERE rn = 1;
+    `;
+
+    connection.query(tagQuery, [], (error, results) => {
+        if (error) {
+            console.log(error);
+            callback(error, null);
+            connection.end();
+            return;
+        }
+
+        if (results.length === 0) {
+            callback(null, {
+                tags: [],
+            });
+            connection.end();
+            return;
+        }
+
+        const tags = results.map((result) => result.tag);
+
+        callback(null, {
+            tags: tags,
+        });
+        connection.end();
+    });
+};
+
 // // Sử dụng hàm:
 // let searchParams = {
 //     page: 1,
@@ -192,6 +230,7 @@ const getPrice = (callback) => {
 export default {
     searchProducts,
     getPrice,
+    getTag,
     // ,addProduct,
     // getDetailProduct,
     // getProductByProductnameAndRole,

@@ -46,6 +46,18 @@ const getPrice = (request, response) => {
     });
 };
 
+const getTag = (request, response) => {
+    productService.getTag((error, result) => {
+        if (error) {
+            response.status(500).send({
+                error: error.message,
+            });
+        } else {
+            response.send(result);
+        }
+    });
+};
+
 const addProduct = (request, response) => {
     if (request.auth.role !== 1) {
         response.status(403).send({
@@ -153,6 +165,7 @@ const deleteProduct = (request, response) => {
 export default {
     searchProducts,
     getPrice,
+    getTag,
     addProduct,
     getDetailProduct,
     updateProduct,

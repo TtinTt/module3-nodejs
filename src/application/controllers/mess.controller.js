@@ -1,17 +1,16 @@
-import orderService from "../services/order.service.js";
+import messService from "../services/mess.service.js";
 
-const searchOrders = (request, response) => {
+const searchMesss = (request, response) => {
     if (!request.authAdmin.admin_id) {
         response.status(403).send({
             error: "Không có quyền truy cập.",
         });
-
         return;
     }
 
     const { name, page, limit, sortType } = request.query;
 
-    orderService.searchOrders(
+    messService.searchMesss(
         { name: name, page: page, limit: limit, sortType: sortType },
         (error, result) => {
             if (error) {
@@ -25,15 +24,15 @@ const searchOrders = (request, response) => {
     );
 };
 
-const addOrder = (request, response) => {
+const addMess = (request, response) => {
     console.log(request.body);
     const requestBody = request.body;
-    console.log("controller requestBody", requestBody);
+    console.log("controller request", request.body);
 
-    orderService.addOrder(
+    messService.addMess(
         {
             ...requestBody,
-            // authId: request.auth.order_id,
+            // authId: request.auth.mess_id,
         },
         (error, result) => {
             if (error) {
@@ -47,32 +46,11 @@ const addOrder = (request, response) => {
     );
 };
 
-const getOrderByUserEmail = (request, response) => {
-    const email = decodeURIComponent(request.params.email);
-    console.log("email", email);
+// const getMessByUserEmail = (request, response) => {
+//     const email = decodeURIComponent(request.params.email);
+//     console.log("email", email);
 
-    orderService.getOrderByUserEmail(email, (error, result) => {
-        if (error) {
-            response.status(500).send({
-                error: error.message,
-            });
-        } else {
-            response.send(result);
-        }
-    });
-};
-
-// const getDetailOrder = (request, response) => {
-//     if (request.auth.role !== 1) {
-//         response.status(403).send({
-//             error: "Không có quyền truy cập.",
-//         });
-
-//         return;
-//     }
-
-//     const { id } = request.params;
-//     orderService.getDetailOrder(id, (error, result) => {
+//     messService.getMessByUserEmail(email, (error, result) => {
 //         if (error) {
 //             response.status(500).send({
 //                 error: error.message,
@@ -83,20 +61,43 @@ const getOrderByUserEmail = (request, response) => {
 //     });
 // };
 
-const updateOrder = (request, response) => {
-    // if (!request.authAdmin.admin_id) {
-    //     response.status(403).send({
-    //         error: "Không có quyền truy cập.",
-    //     });
+// const getDetailMess = (request, response) => {
+//     if (request.auth.role !== 1) {
+//         response.status(403).send({
+//             error: "Không có quyền truy cập.",
+//         });
 
-    //     return;
-    // }
+//         return;
+//     }
 
-    const orderId = request.params.id;
+//     const { id } = request.params;
+//     messService.getDetailMess(id, (error, result) => {
+//         if (error) {
+//             response.status(500).send({
+//                 error: error.message,
+//             });
+//         } else {
+//             response.send(result);
+//         }
+//     });
+// };
+
+const updateMess = (request, response) => {
+    console.log("check mess", request.body);
+
+    if (!request.authAdmin.admin_id) {
+        response.status(403).send({
+            error: "Không có quyền truy cập.",
+        });
+
+        return;
+    }
+
+    const messId = request.params.id;
     const requestBody = request.body;
 
-    orderService.updateOrder(
-        orderId,
+    messService.updateMess(
+        messId,
         {
             ...requestBody,
         },
@@ -112,7 +113,7 @@ const updateOrder = (request, response) => {
     );
 };
 
-// const deleteOrder = (request, response) => {
+// const deleteMess = (request, response) => {
 //     if (request.auth.role !== 1) {
 //         response.status(403).send({
 //             error: "Không có quyền truy cập.",
@@ -123,7 +124,7 @@ const updateOrder = (request, response) => {
 
 //     const { id } = request.params;
 
-//     orderService.deleteOrder(id, (error, result) => {
+//     messService.deleteMess(id, (error, result) => {
 //         if (error) {
 //             response.status(500).send({
 //                 error: error.message,
@@ -135,10 +136,10 @@ const updateOrder = (request, response) => {
 // };
 
 export default {
-    searchOrders,
-    getOrderByUserEmail,
-    addOrder,
-    // getDetailOrder,
-    updateOrder,
-    // deleteOrder,
+    searchMesss,
+    // getMessByUserEmail,
+    addMess,
+    // getDetailMess,
+    updateMess,
+    // deleteMess,
 };

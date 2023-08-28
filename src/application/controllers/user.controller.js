@@ -77,18 +77,16 @@ const getDetailUser = (request, response) => {
 };
 
 const updateUser = (request, response) => {
-    // if (request.auth.role !== 1) {
-    //     response.status(403)
-    //         .send({
-    //             error: 'Không có quyền truy cập.'
-    //         })
-
-    //     return;
-    // }
-    // console.log(request);
     const userId = request.params.id;
     const requestBody = request.body;
     const img = request.file;
+    console.log(request.authAdmin);
+    if (request.body.status && !request.authAdmin?.admin_id) {
+        response.status(403).send({
+            error: "Không có quyền truy cập.",
+        });
+        return;
+    }
 
     userService.updateUser(
         userId,

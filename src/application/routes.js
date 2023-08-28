@@ -6,7 +6,7 @@ import authController from "./controllers/auth.controller.js";
 import userController from "./controllers/user.controller.js";
 import productController from "./controllers/product.controller.js";
 import orderController from "./controllers/order.controller.js";
-
+import messController from "./controllers/mess.controller.js";
 // https://expressjs.com/en/resources/middleware/multer.html
 const upload = multer(uploadConfig);
 
@@ -49,5 +49,10 @@ router.get("/orders/:email", orderController.getOrderByUserEmail);
 router.put("/orders/:id", orderController.updateOrder);
 // router.delete("/orders/:id", orderController.deleteOrder);
 // Contact management
+
+// Messages management
+router.get("/messs", messController.searchMesss);
+router.post("/messs", messController.addMess);
+router.put("/messs/:id", messController.updateMess);
 
 export default router;

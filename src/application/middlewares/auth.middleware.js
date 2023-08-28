@@ -10,7 +10,8 @@ export default function (request, response, next) {
         (method === "POST" && pathname === "/register") ||
         (method === "GET" && pathname === "/products") ||
         (method === "GET" && pathname === "/products/price") ||
-        (method === "GET" && pathname === "/products/tag")
+        (method === "GET" && pathname === "/products/tag") ||
+        (method === "POST" && pathname === "/messs")
     ) {
         next();
     } else {

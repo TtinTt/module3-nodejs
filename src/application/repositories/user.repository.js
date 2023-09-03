@@ -62,6 +62,7 @@ const searchUsers = (params, callback) => {
         const selectColumnsQuery =
             "SELECT user_id, email, name, bday, date, status, add_address, phone, img " +
             baseSql +
+            " ORDER BY user_id DESC" +
             ` LIMIT ${limit} OFFSET ${offset}`;
 
         connection.query(selectColumnsQuery, bindParams, (error, users) => {
@@ -154,7 +155,8 @@ const getUserByUsernameAndRole = (email, callback) => {
       SELECT
         user_id,
         email,
-        password
+        password,
+        status
       FROM users
       WHERE
         email = ?
@@ -238,16 +240,11 @@ const createApiKey = (userId, apiKey, callback) => {
 };
 
 const updateUser = (userId, params, callback) => {
+    console.log("user repo", params);
     const connection = getConnection();
-    console.log(params);
     let sql = "UPDATE users SET cart = ?";
-
-    // if (params.cart) {
-    //     sql += ", ";
-    //     ;
-    // }
-
     let bindParams = [];
+
     if (params.cart) {
         bindParams.push(JSON.stringify(params.cart));
     } else {
@@ -276,6 +273,7 @@ const updateUser = (userId, params, callback) => {
 
     if (params.password) {
         sql += ", password = ?";
+        // , api_key = NULL";
         bindParams.push(encryptPassword(params.password));
     }
 
@@ -283,8 +281,9 @@ const updateUser = (userId, params, callback) => {
         sql += ", img = ?";
         bindParams.push(params.img);
     }
-    if (params.status) {
-        //TODO check quyền admin
+    console.log("Status", params.status);
+
+    if (params.status >= 0) {
         sql += ", status = ?";
         bindParams.push(params.status);
     }
@@ -292,6 +291,7 @@ const updateUser = (userId, params, callback) => {
     sql += " WHERE user_id = ?";
     bindParams.push(userId);
 
+    console.log("sql", sql, "bindParams", bindParams);
     connection.query(sql, bindParams, (error, result) => {
         if (error) {
             callback(error, null);

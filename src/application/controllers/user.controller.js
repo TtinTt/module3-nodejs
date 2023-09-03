@@ -80,8 +80,16 @@ const updateUser = (request, response) => {
     const userId = request.params.id;
     const requestBody = request.body;
     const img = request.file;
-    console.log(request.authAdmin);
+    console.log("user controller", request.body);
+
     if (request.body.status && !request.authAdmin?.admin_id) {
+        response.status(403).send({
+            error: "Không có quyền truy cập.",
+        });
+        return;
+    }
+
+    if (request.body.resetPassword && !request.authAdmin?.admin_id) {
         response.status(403).send({
             error: "Không có quyền truy cập.",
         });

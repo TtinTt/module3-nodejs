@@ -57,7 +57,10 @@ const searchOrders = (params, callback) => {
         }
 
         const selectColumnsQuery =
-            "SELECT * " + baseSql + ` LIMIT ${limit} OFFSET ${offset}`;
+            "SELECT * " +
+            baseSql +
+            " ORDER BY id DESC" +
+            ` LIMIT ${limit} OFFSET ${offset}`;
 
         connection.query(selectColumnsQuery, bindParams, (error, orders) => {
             if (error) {

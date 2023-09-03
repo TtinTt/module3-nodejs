@@ -31,14 +31,10 @@ router.delete("/users/:id", userController.deleteUser);
 router.get("/products", productController.searchProducts);
 router.get("/products/price", productController.getPrice);
 router.get("/products/tag", productController.getTag);
-// router.post("/products", upload.single("avatar"), productController.addProduct);
+router.post("/products", upload.any(), productController.addProduct);
 // router.get("/products/:id", productController.getDetailProduct);
-// router.put(
-//     "/products/:id",
-//     upload.single("avatar"),
-//     productController.updateProduct
-// );
-// router.delete("/products/:id", productController.deleteProduct);
+router.put("/products/:id", upload.any(), productController.updateProduct);
+router.delete("/products/:id", productController.deleteProduct);
 
 // Order management
 router.get("/orders", orderController.searchOrders);

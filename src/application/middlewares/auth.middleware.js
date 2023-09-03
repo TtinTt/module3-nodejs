@@ -18,52 +18,61 @@ export default function (request, response, next) {
         const apiKey = request.header("X-API-Key");
         const apiKeyAdmin = request.header("X-API-Key-Admin");
 
-        console.log("request.body", request.body);
-        console.log("request.params", request.params);
-        console.log("auth middleware", apiKey);
-        console.log("auth middleware admin", apiKeyAdmin);
-
         if (!apiKey && !apiKeyAdmin) {
             return response.status(401).send({
                 error: "Không có API Key để xác thực.",
             });
         }
 
-        if (apiKey) {
-            userRepository.getUserByApiKey(apiKey, (error, result) => {
-                if (error) {
-                    return response.status(500).send({
-                        error: error.message,
-                    });
-                } else if (result.length === 0) {
-                    return response.status(401).send({
-                        error: "Không thể xác thực người dùng.",
-                    });
-                } else {
-                    request.auth = result[0];
-
-                    if (!apiKeyAdmin) {
-                        next();
+        const userPromise = new Promise((resolve, reject) => {
+            if (apiKey) {
+                userRepository.getUserByApiKey(apiKey, (error, result) => {
+                    if (error) {
+                        reject({ status: 500, message: error.message });
+                    } else if (result.length === 0) {
+                        reject({
+                            status: 401,
+                            message: "Không thể xác thực người dùng.",
+                        });
+                    } else {
+                        request.auth = result[0];
+                        resolve();
                     }
-                }
-            });
-        }
+                });
+            } else {
+                resolve();
+            }
+        });
 
-        if (apiKeyAdmin) {
-            adminRepository.getAdminByApiKey(apiKeyAdmin, (error, result) => {
-                if (error) {
-                    return response.status(500).send({
-                        error: error.message,
-                    });
-                } else if (result.length === 0) {
-                    return response.status(401).send({
-                        error: "Không thể xác thực quản trị viên.",
-                    });
-                } else {
-                    request.authAdmin = result[0];
-                    next();
-                }
+        const adminPromise = new Promise((resolve, reject) => {
+            if (apiKeyAdmin) {
+                adminRepository.getAdminByApiKey(
+                    apiKeyAdmin,
+                    (error, result) => {
+                        if (error) {
+                            reject({ status: 500, message: error.message });
+                        } else if (result.length === 0) {
+                            reject({
+                                status: 401,
+                                message: "Không thể xác thực quản trị viên.",
+                            });
+                        } else {
+                            request.authAdmin = result[0];
+                            resolve();
+                        }
+                    }
+                );
+            } else {
+                resolve();
+            }
+        });
+
+        Promise.all([userPromise, adminPromise])
+            .then(() => {
+                next();
+            })
+            .catch((error) => {
+                response.status(error.status).send({ error: error.message });
             });
-        }
     }
 }

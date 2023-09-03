@@ -38,12 +38,22 @@ const login = (params, callback) => {
                 return;
             } else {
                 const user = result[0];
+                console.log("user là", user);
 
                 if (!comparePassword(password, user.password)) {
                     callback(
                         {
                             code: 401,
                             message: "Sai mật khẩu",
+                        },
+                        null
+                    );
+                    return;
+                } else if (Number(user.status) == 0) {
+                    callback(
+                        {
+                            code: 406,
+                            message: "Tài khoản bị vô hiệu hóa",
                         },
                         null
                     );
@@ -220,53 +230,6 @@ const register = (params, callback) => {
     const validate = (params) => {
         let errors = new Map();
 
-        // // Validate username
-        // if (!params.username) {
-        //     errors.set('username', 'Tên đăng nhập không được bỏ trống.');
-        // } else if (typeof params.username !== 'string') {
-        //     errors.set('username', 'Tên đăng nhập phải là chuỗi.');
-        // } else if (params.username.length < 4 || params.username.length > 10) {
-        //     errors.set('username', 'Tên đăng nhập chỉ cho phép 4 đến 10 ký tự.');
-        // }
-
-        // // Validate email
-        // if (!params.email) {
-        //     errors.set("email", "Email không được bỏ trống.");
-        // } else if (typeof params.email !== "string") {
-        //     errors.set("email", "Email phải là chuỗi.");
-        // } else if (params.email.length < 4 || params.email.length > 50) {
-        //     errors.set("email", "Email chỉ cho phép 4 đến 50 ký tự.");
-        // }
-
-        // // Validate first name
-        // if (typeof params.first_name !== 'string') {
-        //     errors.set('first_name', 'Họ phải là chuỗi.');
-        // } else if (params.first_name && params.first_name.length > 50) {
-        //     errors.set('first_name', 'Họ chỉ cho phép dưới 50 ký tự.');
-        // }
-
-        // // Validate last name
-        // if (typeof params.last_name !== 'string') {
-        //     errors.set('last_name', 'Tên phải là chuỗi.');
-        // } else if (params.first_name && params.first_name.length > 50) {
-        //     errors.set('last_name', 'Tên chỉ cho phép dưới 50 ký tự.');
-        // }
-
-        // // Validate password
-        // if (typeof params.password !== "string") {
-        //     errors.set("password", "Mật khẩu phải là chuỗi.");
-        // } else if (params.password < 8 || params.password.length > 20) {
-        //     errors.set("password", "Mật khẩu chỉ cho phép từ 8 đến 20 ký tự.");
-        // }
-
-        // // Validate password
-        // if (!params.password) {
-        //     errors.set("password", "Mật khẩu không được bỏ trống.");
-        // } else if (typeof params.password !== "string") {
-        //     errors.set("password", "Mật khẩu phải là chuỗi.");
-        // } else if (params.password.length < 8 || params.password.length > 20) {
-        //     errors.set("password", "Mật khẩu chỉ cho phép từ 8 đến 20 ký tự.");
-        // }
         const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
         if (params.email == "" || params.password == "") {
@@ -276,7 +239,9 @@ const register = (params, callback) => {
             );
         } else if (!regex.test(params.email)) {
             errors.set("email", "Email không hợp lệ");
-        } else if (params.password.length < 6 || params.password.length > 200) {
+        } else if (
+            !(params.password.length >= 6 && params.password.length <= 200)
+        ) {
             errors.set("password", "Mật khẩu cần có độ dài 6 tới 200 ký tự");
         } else if (
             !(
@@ -291,11 +256,6 @@ const register = (params, callback) => {
             );
         }
 
-        // if (typeof params.role !== "string") {
-        //     errors.set("role", "Vai trò phải là chuỗi.");
-        // } else if (params.role !== "1" && params.role !== "2") {
-        //     errors.set("role", "Vai trò chỉ cho phép nhập 1 hoặc 2.");
-        // }
         return errors;
     };
 

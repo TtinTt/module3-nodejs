@@ -13,6 +13,7 @@ const login = (request, response) => {
         if (error) {
             response.status(error.code).send({
                 error: error.message,
+                status: error.code,
             });
         } else {
             response.send(result);

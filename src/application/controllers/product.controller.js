@@ -59,7 +59,7 @@ const getTag = (request, response) => {
 };
 
 const addProduct = (request, response) => {
-    if (request.auth.role !== 1) {
+    if (!request.authAdmin.admin_id) {
         response.status(403).send({
             error: "Không có quyền truy cập.",
         });
@@ -67,14 +67,23 @@ const addProduct = (request, response) => {
         return;
     }
 
-    const requestBody = request.body;
-    const avatar = request.file;
+    const productData = request.body;
+    const imgFiles = request.files;
+
+    // Xử lý URL ảnh được gửi dưới dạng req.body.imgUrl0, req.body.imgUrl1, v.v.
+    const imgUrls = [];
+    for (let i = 0; i < 10; i++) {
+        // tối đa 10 URL
+        if (request.body[`imgUrl${i}`]) {
+            imgUrls.push(request.body[`imgUrl${i}`]);
+        }
+    }
 
     productService.addProduct(
         {
-            ...requestBody,
-            authId: request.auth.product_id,
-            avatar: avatar,
+            ...productData,
+            imgFiles: imgFiles,
+            imgUrls: imgUrls,
         },
         (error, result) => {
             if (error) {
@@ -110,7 +119,7 @@ const getDetailProduct = (request, response) => {
 };
 
 const updateProduct = (request, response) => {
-    if (request.auth.role !== 1) {
+    if (!request.authAdmin.admin_id) {
         response.status(403).send({
             error: "Không có quyền truy cập.",
         });
@@ -119,14 +128,24 @@ const updateProduct = (request, response) => {
     }
 
     const productId = request.params.id;
-    const requestBody = request.body;
-    const avatar = request.file;
+    const productData = request.body;
+    const imgFiles = request.files;
+
+    // Xử lý URL ảnh được gửi dưới dạng req.body.imgUrl0, req.body.imgUrl1, v.v.
+    const imgUrls = [];
+    for (let i = 0; i < 10; i++) {
+        // tối đa 10 URL
+        if (request.body[`imgUrl${i}`]) {
+            imgUrls.push(request.body[`imgUrl${i}`]);
+        }
+    }
 
     productService.updateProduct(
         productId,
         {
-            ...requestBody,
-            avatar: avatar,
+            ...productData,
+            imgFiles: imgFiles,
+            imgUrls: imgUrls,
         },
         (error, result) => {
             if (error) {
@@ -141,7 +160,7 @@ const updateProduct = (request, response) => {
 };
 
 const deleteProduct = (request, response) => {
-    if (request.auth.role !== 1) {
+    if (!request.authAdmin.admin_id) {
         response.status(403).send({
             error: "Không có quyền truy cập.",
         });

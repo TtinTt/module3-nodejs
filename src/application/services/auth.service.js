@@ -118,6 +118,15 @@ const login = (params, callback) => {
                         null
                     );
                     return;
+                } else if (Number(admin.status) == 0) {
+                    callback(
+                        {
+                            code: 406,
+                            message: "Tài khoản bị vô hiệu hóa",
+                        },
+                        null
+                    );
+                    return;
                 } else {
                     const apiKeyAdmin = admin.admin_id + randomString(128);
 

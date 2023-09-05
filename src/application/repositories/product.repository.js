@@ -66,18 +66,39 @@ const searchProducts = (params, callback) => {
             return;
         }
 
-        let sqlWithSortAndLimit =
-            baseSql +
-            " GROUP BY products.product_id ORDER BY products.product_id DESC"; // Thêm dòng này
+        // let sqlWithSortAndLimit =
+        //     baseSql +
+        //     " GROUP BY products.product_id ORDER BY products.product_id DESC"; // Thêm dòng này
 
-        switch (sortType) {
-            case "2":
-                sqlWithSortAndLimit += ", price ASC";
+        // console.log("sortType", sortType);
+
+        // switch (parseInt(sortType)) {
+        //     case 2:
+        //         sqlWithSortAndLimit += ", price ASC";
+        //         break;
+        //     case 1:
+        //         sqlWithSortAndLimit += ", price DESC";
+        //         break;
+        // }
+        let sqlWithSortAndLimit;
+        switch (parseInt(sortType)) {
+            case 2:
+                sqlWithSortAndLimit =
+                    baseSql +
+                    " GROUP BY products.product_id ORDER BY price ASC, products.product_id DESC";
                 break;
-            case "1":
-                sqlWithSortAndLimit += ", price DESC";
+            case 1:
+                sqlWithSortAndLimit =
+                    baseSql +
+                    " GROUP BY products.product_id ORDER BY price DESC, products.product_id DESC";
+                break;
+            default:
+                sqlWithSortAndLimit =
+                    baseSql +
+                    " GROUP BY products.product_id ORDER BY products.product_id DESC";
                 break;
         }
+
         const selectColumnsQuery =
             "SELECT products.*" +
             sqlWithSortAndLimit +

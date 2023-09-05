@@ -7,6 +7,7 @@ import userController from "./controllers/user.controller.js";
 import productController from "./controllers/product.controller.js";
 import orderController from "./controllers/order.controller.js";
 import messController from "./controllers/mess.controller.js";
+import adminController from "./controllers/admin.controller.js";
 // https://expressjs.com/en/resources/middleware/multer.html
 const upload = multer(uploadConfig);
 
@@ -26,6 +27,13 @@ router.post("/users", upload.single("img"), userController.addUser);
 router.get("/users/:id", userController.getDetailUser);
 router.put("/users/:id", upload.single("img"), userController.updateUser);
 router.delete("/users/:id", userController.deleteUser);
+
+// Admin management
+router.get("/admins", adminController.searchAdmins);
+router.post("/admins", adminController.addAdmin);
+router.get("/admins/:id", adminController.getDetailAdmin);
+router.put("/admins/:id", upload.single("img"), adminController.updateAdmin);
+// router.delete("/admins/:id", adminController.deleteAdmin);
 
 // Product management
 router.get("/products", productController.searchProducts);

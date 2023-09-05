@@ -17,6 +17,8 @@ export default function (request, response, next) {
     } else {
         const apiKey = request.header("X-API-Key");
         const apiKeyAdmin = request.header("X-API-Key-Admin");
+        console.log("apiKey", apiKey);
+        console.log("apiKeyAdmin", apiKeyAdmin);
 
         if (!apiKey && !apiKeyAdmin) {
             return response.status(401).send({

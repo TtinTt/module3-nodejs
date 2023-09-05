@@ -40,6 +40,16 @@ const getPrice = (callback) => {
     });
 };
 
+const getTag = (callback) => {
+    productRepository.getTag((error, result) => {
+        if (error) {
+            callback(error, null);
+        } else {
+            callback(null, result);
+        }
+    });
+};
+
 const addProduct = (requestBody, callback) => {
     let originalname = null;
     let path = null;
@@ -49,110 +59,137 @@ const addProduct = (requestBody, callback) => {
         path = requestBody.avatar.path;
     }
 
-    const validate = (params) => {
+    const validate = (product) => {
         let errors = new Map();
 
-        // Validate productname
-        if (!params.productname) {
-            errors.set("productname", "Tên đăng nhập không được bỏ trống.");
-        } else if (typeof params.productname !== "string") {
-            errors.set("productname", "Tên đăng nhập phải là chuỗi.");
-        } else if (
-            params.productname.length < 4 ||
-            params.productname.length > 10
-        ) {
+        if (!product.name) {
+            errors.set("name", "Tên sản phẩm không được bỏ trống.");
+        }
+
+        if (Number(product.price) < 1) {
+            errors.set("price", "Giá sản phẩm không hợp lệ.");
+        }
+
+        if (product.comparative && Number(product.comparative) < 1) {
+            errors.set("comparative", "Giá so sánh không hợp lệ.");
+        }
+
+        if (typeof product.name !== "string") {
+            errors.set("name", "Tên sản phẩm phải là chuỗi.");
+        } else if (!product.name.length > 3 && !product.name.length < 250) {
             errors.set(
-                "productname",
-                "Tên đăng nhập chỉ cho phép 4 đến 10 ký tự."
+                "name",
+                "Tên sản phẩm chỉ cho phép dài từ 3 tới 250 ký tự."
             );
         }
 
-        // Validate email
-        if (!params.email) {
-            errors.set("email", "Email không được bỏ trống.");
-        } else if (typeof params.email !== "string") {
-            errors.set("email", "Email phải là chuỗi.");
-        } else if (params.email.length < 4 || params.email.length > 50) {
-            errors.set("email", "Email chỉ cho phép 4 đến 50 ký tự.");
+        if (product.imgUrls && !product.imgUrls instanceof Array) {
+            errors.set("imgUrls", "Ảnh sản phẩm phải là mảng.");
         }
 
-        // Validate first name
-        if (typeof params.first_name !== "string") {
-            errors.set("first_name", "Họ phải là chuỗi.");
-        } else if (params.first_name && params.first_name.length > 50) {
-            errors.set("first_name", "Họ chỉ cho phép dưới 50 ký tự.");
+        if (product.sku && typeof product.sku !== "string") {
+            errors.set("sku", "Sku sản phẩm phải là chuỗi.");
+        } else if (product.hasOwnProperty("sku") && product.sku.length > 250) {
+            errors.set(
+                "sku",
+                "Sku sản phẩm chỉ cho phép dài không quá 250 ký tự."
+            );
         }
 
-        // Validate last name
-        if (typeof params.last_name !== "string") {
-            errors.set("last_name", "Tên phải là chuỗi.");
-        } else if (params.first_name && params.first_name.length > 50) {
-            errors.set("last_name", "Tên chỉ cho phép dưới 50 ký tự.");
+        if (product.description && typeof product.description !== "string") {
+            errors.set("description", "Sku sản phẩm phải là chuỗi.");
+        } else if (product.description && product.description.length > 1000) {
+            errors.set(
+                "description",
+                "Sku sản phẩm chỉ cho phép dài không quá 1000 ký tự."
+            );
         }
-
-        // Validate password
-        if (typeof params.password !== "string") {
-            errors.set("password", "Mật khẩu phải là chuỗi.");
-        } else if (params.password < 8 || params.password.length > 20) {
-            errors.set("password", "Mật khẩu chỉ cho phép từ 8 đến 20 ký tự.");
-        }
-
-        // Validate password
-        if (!params.password) {
-            errors.set("password", "Mật khẩu không được bỏ trống.");
-        } else if (typeof params.password !== "string") {
-            errors.set("password", "Mật khẩu phải là chuỗi.");
-        } else if (params.password < 8 || params.password.length > 20) {
-            errors.set("password", "Mật khẩu chỉ cho phép từ 8 đến 20 ký tự.");
-        }
-
-        if (typeof params.role !== "string") {
-            errors.set("role", "Vai trò phải là chuỗi.");
-        } else if (params.role !== "1" && params.role !== "2") {
-            errors.set("role", "Vai trò chỉ cho phép nhập 1 hoặc 2.");
-        }
-
+        console.log(errors);
         return errors;
     };
 
     const validateErrors = validate(requestBody);
-
     if (validateErrors.size !== 0) {
         callback(Object.fromEntries(validateErrors), null);
     } else {
-        let avatar = null;
+        let imgFiles = null;
+        let processedImgFiles = [];
+        // if (requestBody.imgFiles?.length > 0) {
+        //     // console.log(requestBody.imgFiles);
+        //     imgFiles = requestBody.imgFiles;
+        //     imgFiles.forEach((imgFile, index) => {
+        //         console.log(imgFile.originalname);
+        //         let originalname = parseName(imgFile.originalname);
+        //         let indexImg = imgFile.fieldname.slice(-1);
+        //         console.log("file name", originalname, " - index", indexImg);
+        //         // let originalname = imgFile.originalname;
+        //         const imgFilesExtension = getFileExtension(
+        //             imgFile.originalname
+        //         );
+        //         let path = imgFile.path;
+        //         let newImgFilePath = `imgFiles/${productId}-${indexImg}.${imgFilesExtension}`; // Sử dụng một biến mới
+        //         processedImgFiles.push(newImgFilePath); // Thêm đường dẫn vào mảng
+        //         const imgFilesLocation = `./public/${newImgFilePath}`; // Cập nhật biến này
 
-        if (requestBody.avatar) {
-            const avatarExtension = getFileExtension(originalname);
-            avatar = `avatar/${requestBody.productname}.${avatarExtension}`;
-            const avatarLocation = `./public/${avatar}`;
+        //         // Copy upload file to saving location
+        //         fs.cpSync(path, imgFilesLocation);
+        //         fs.rmSync(path);
+        //     });
 
-            // Copy upload file to saving location
-            fs.cpSync(path, avatarLocation);
-        }
+        //     // console.log("file", processedImgFiles, "url", requestBody.imgUrls);
+        // }
 
-        const newProduct = {
-            productname: requestBody.productname,
-            email: requestBody.email,
-            first_name: requestBody.first_name,
-            last_name: requestBody.last_name,
-            password: requestBody.password,
-            role: requestBody.role,
-            avatar: avatar,
-            created_by_id: requestBody.authId,
-            updated_by_id: requestBody.authId,
+        // let img = requestBody.imgUrls || [];
+
+        const handleSaveFile = (productId) => {
+            // console.log(requestBody.imgFiles);
+            imgFiles = requestBody.imgFiles;
+            imgFiles.forEach((imgFile, index) => {
+                console.log(imgFile.originalname);
+                let originalname = parseName(imgFile.originalname);
+                let indexImg = imgFile.fieldname.slice(-1);
+                console.log("file name", originalname, " - index", indexImg);
+                // let originalname = imgFile.originalname;
+                const imgFilesExtension = getFileExtension(
+                    imgFile.originalname
+                );
+                let path = imgFile.path;
+                let newImgFilePath = `imgFiles/${productId}-${indexImg}.${imgFilesExtension}`; // Sử dụng một biến mới
+                processedImgFiles.push(newImgFilePath); // Thêm đường dẫn vào mảng
+                const imgFilesLocation = `./public/${newImgFilePath}`; // Cập nhật biến này
+
+                // Copy upload file to saving location
+                fs.cpSync(path, imgFilesLocation);
+                fs.rmSync(path);
+            });
+
+            // console.log("file", processedImgFiles, "url", requestBody.imgUrls);
+            let img = requestBody.imgUrls || [];
+            let resultImg = mergeAndSortImages(processedImgFiles, img);
+            return resultImg;
         };
 
-        productRepository.addProduct(newProduct, (error, result) => {
-            if (path) {
-                fs.rmSync(path);
+        const updateProduct = {
+            name: requestBody.name || "",
+            tag: requestBody.tag || "",
+            price: requestBody.price,
+            comparative: requestBody.comparative || "",
+            sku: requestBody.sku || "",
+            description: requestBody.description || "",
+        };
+        console.log("updateProduct", updateProduct);
+        productRepository.addProduct(
+            updateProduct,
+            handleSaveFile,
+            (error, result) => {
+                if (error) {
+                    callback(error, null);
+                } else {
+                    console.log(result);
+                    callback(null, result);
+                }
             }
-            if (error) {
-                callback(error, null);
-            } else {
-                callback(null, result);
-            }
-        });
+        );
     }
 };
 
@@ -172,50 +209,71 @@ const getDetailProduct = (id, callback) => {
     }
 };
 
+const parseName = (name) => {
+    const nameWithoutExtension = name.substr(0, name.lastIndexOf("."));
+    return nameWithoutExtension;
+};
+
 const updateProduct = (productId, requestBody, callback) => {
+    console.log("requestBody", requestBody);
     let originalname = null;
     let path = null;
 
-    if (requestBody.avatar) {
-        originalname = requestBody.avatar.originalname;
-        path = requestBody.avatar.path;
+    if (requestBody.imgFiles) {
+        originalname = requestBody.imgFiles.originalname;
+        path = requestBody.imgFiles.path;
     }
 
-    const validate = (params) => {
+    const validate = (product) => {
         let errors = new Map();
 
-        // Validate first name
-        if (typeof params.first_name !== "string") {
-            errors.set("first_name", "Họ phải là chuỗi.");
-        } else if (params.first_name && params.first_name.length > 50) {
-            errors.set("first_name", "Họ chỉ cho phép dưới 50 ký tự.");
+        if (!productId) {
+            errors.set("id", "ID không được bỏ trống.");
         }
 
-        // Validate last name
-        if (typeof params.last_name !== "string") {
-            errors.set("last_name", "Tên phải là chuỗi.");
-        } else if (params.first_name && params.first_name.length > 50) {
-            errors.set("last_name", "Tên chỉ cho phép dưới 50 ký tự.");
+        if (product.name.length == 0) {
+            errors.set("name", "Tên sản phẩm không được bỏ trống.");
         }
 
-        // Validate password
-        if (params.password) {
-            if (typeof params.password !== "string") {
-                errors.set("password", "Mật khẩu phải là chuỗi.");
-            } else if (params.password < 8 || params.password.length > 20) {
-                errors.set(
-                    "password",
-                    "Mật khẩu chỉ cho phép từ 8 đến 20 ký tự."
-                );
-            }
+        if (Number(product.price) < 1) {
+            errors.set("price", "Giá sản phẩm không hợp lệ.");
         }
 
-        if (typeof params.role !== "string") {
-            errors.set("role", "Vai trò phải là chuỗi.");
-        } else if (params.role !== "1" && params.role !== "2") {
-            errors.set("role", "Vai trò chỉ cho phép nhập 1 hoặc 2.");
+        if (product.comparative && Number(product.comparative) < 1) {
+            errors.set("comparative", "Giá so sánh không hợp lệ.");
         }
 
+        if (typeof product.name !== "string") {
+            errors.set("name", "Tên sản phẩm phải là chuỗi.");
+        } else if (!product.name.length > 3 && !product.name.length < 250) {
+            errors.set(
+                "name",
+                "Tên sản phẩm chỉ cho phép dài từ 3 tới 250 ký tự."
+            );
+        }
+
+        if (product.imgUrls && !product.imgUrls instanceof Array) {
+            errors.set("imgUrls", "Ảnh sản phẩm phải là mảng.");
+        }
+
+        if (product.sku && typeof product.sku !== "string") {
+            errors.set("sku", "Sku sản phẩm phải là chuỗi.");
+        } else if (product.hasOwnProperty("sku") && product.sku.length > 250) {
+            errors.set(
+                "sku",
+                "Sku sản phẩm chỉ cho phép dài không quá 250 ký tự."
+            );
+        }
+
+        if (product.description && typeof product.description !== "string") {
+            errors.set("description", "Sku sản phẩm phải là chuỗi.");
+        } else if (product.description && product.description.length > 1000) {
+            errors.set(
+                "description",
+                "Sku sản phẩm chỉ cho phép dài không quá 1000 ký tự."
+            );
+        }
+        console.log(errors);
         return errors;
     };
 
@@ -224,44 +282,95 @@ const updateProduct = (productId, requestBody, callback) => {
     if (validateErrors.size !== 0) {
         callback(Object.fromEntries(validateErrors), null);
     } else {
-        let avatar = null;
+        let imgFiles = null;
+        let processedImgFiles = [];
+        if (requestBody.imgFiles?.length > 0) {
+            // console.log(requestBody.imgFiles);
+            imgFiles = requestBody.imgFiles;
+            imgFiles.forEach((imgFile, index) => {
+                console.log(imgFile.originalname);
+                let originalname = parseName(imgFile.originalname);
+                let indexImg = imgFile.fieldname.slice(-1);
+                console.log("file name", originalname, " - index", indexImg);
+                // let originalname = imgFile.originalname;
+                const imgFilesExtension = getFileExtension(
+                    imgFile.originalname
+                );
+                let path = imgFile.path;
+                let newImgFilePath = `imgFiles/${productId}-${indexImg}.${imgFilesExtension}`; // Sử dụng một biến mới
+                processedImgFiles.push(newImgFilePath); // Thêm đường dẫn vào mảng
+                const imgFilesLocation = `./public/${newImgFilePath}`; // Cập nhật biến này
 
-        if (requestBody.avatar) {
-            const avatarExtension = getFileExtension(originalname);
-            avatar = `avatar/${requestBody.productname}.${avatarExtension}`;
-            const avatarLocation = `./public/${avatar}`;
+                // Copy upload file to saving location
+                fs.cpSync(path, imgFilesLocation);
+                fs.rmSync(path);
+            });
 
-            // Copy upload file to saving location
-            fs.cpSync(path, avatarLocation);
+            // console.log("file", processedImgFiles, "url", requestBody.imgUrls);
         }
 
+        let img = requestBody.imgUrls || [];
+        let resultImg = mergeAndSortImages(processedImgFiles, img);
         const updateProduct = {
-            productname: requestBody.productname,
-            email: requestBody.email,
-            first_name: requestBody.first_name,
-            last_name: requestBody.last_name,
-            password: requestBody.password,
-            role: requestBody.role,
-            avatar: avatar,
-            updated_by_id: requestBody.authId,
+            name: requestBody.name || "",
+            img:
+                requestBody.imgFiles?.length > 0
+                    ? mergeAndSortImages(processedImgFiles, img)
+                    : img,
+            tag: requestBody.tag || "",
+            price: requestBody.price,
+            comparative: requestBody.comparative || "",
+            sku: requestBody.sku || "",
+            description: requestBody.description || "",
         };
-
+        console.log("updateProduct", updateProduct);
         productRepository.updateProduct(
             productId,
             updateProduct,
             (error, result) => {
-                if (path) {
-                    fs.rmSync(path);
-                }
                 if (error) {
                     callback(error, null);
                 } else {
+                    console.log(result);
                     callback(null, result);
                 }
             }
         );
     }
 };
+
+function mergeAndSortImages(processedImgFiles, imgUrls) {
+    let result = [];
+    let fileOrderMap = {};
+
+    processedImgFiles.forEach((filePath) => {
+        const match = filePath.match(/-(\d+)\./);
+        if (match) {
+            const index = parseInt(match[1], 10);
+            fileOrderMap[index] = filePath;
+        }
+    });
+
+    let maxIndex = Math.max(
+        ...Object.keys(fileOrderMap).map(Number),
+        imgUrls.length + Object.keys(fileOrderMap).length - 1
+    );
+
+    let urlIndex = 0;
+
+    for (let i = 0; i <= maxIndex; i++) {
+        if (fileOrderMap.hasOwnProperty(i)) {
+            result[i] = fileOrderMap[i];
+        } else {
+            if (urlIndex < imgUrls.length) {
+                result[i] = imgUrls[urlIndex];
+                urlIndex++;
+            }
+        }
+    }
+
+    return result;
+}
 
 const deleteProduct = (id, callback) => {
     if (!/^[0-9]+$/.test(id)) {
@@ -281,6 +390,7 @@ const deleteProduct = (id, callback) => {
 
 export default {
     getPrice,
+    getTag,
     searchProducts,
     addProduct,
     getDetailProduct,

@@ -106,23 +106,24 @@ const register = (user, callback) => {
 //     connection.end();
 // };
 
-// const getUserByUsernameAndRole = (username, role, callback) => {
+// const getUserByUsernameAndRole = (email, role, callback) => {
 //     const connection = getConnection();
+//     let table = "users";
+//     if (role == 2) {
+//         table = "admins";
+//     }
 
 //     connection.query(
 //         `
 //       SELECT
 //         user_id,
-//         username,
 //         email,
-//         password,
-//         role
-//       FROM users
+//         password
+//       FROM ?
 //       WHERE
-//         username = ?
-//         AND role = ?
+//         email = ?
 //     `,
-//         [username, role],
+//         [table, email],
 //         (error, result) => {
 //             if (error) {
 //                 callback(error, null);

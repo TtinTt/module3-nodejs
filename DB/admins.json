@@ -1,10 +1,12 @@
 [
     {
         "email": "demoAdmin1@gmail.com",
-        "password": "demoAdmin1@gmail.com"
+        "password": "demoAdmin1@gmail.com",
+        "date": "01:01 01/01/2021"
     },
     {
         "email": "demoAdmin2@gmail.com",
-        "password": "demoAdmin2@gmail.com"
+        "password": "demoAdmin2@gmail.com",
+        "date": "01:01 12/12/2023"
     }
 ]

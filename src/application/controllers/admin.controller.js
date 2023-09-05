@@ -62,27 +62,6 @@ const addAdmin = (request, response) => {
     );
 };
 
-const getDetailAdmin = (request, response) => {
-    if (request.auth.role !== 1) {
-        response.status(403).send({
-            error: "Không có quyền truy cập.",
-        });
-
-        return;
-    }
-
-    const { id } = request.params;
-    adminService.getDetailAdmin(id, (error, result) => {
-        if (error) {
-            response.status(500).send({
-                error: error.message,
-            });
-        } else {
-            response.send(result);
-        }
-    });
-};
-
 const updateAdmin = (request, response) => {
     const adminId = request.params.id;
     console.log("adminId1", adminId);
@@ -133,32 +112,8 @@ const updateAdmin = (request, response) => {
     );
 };
 
-// const deleteAdmin = (request, response) => {
-//     if (request.auth.role !== 1) {
-//         response.status(403).send({
-//             error: "Không có quyền truy cập.",
-//         });
-
-//         return;
-//     }
-
-//     const { id } = request.params;
-
-//     adminService.deleteAdmin(id, (error, result) => {
-//         if (error) {
-//             response.status(500).send({
-//                 error: error.message,
-//             });
-//         } else {
-//             response.status(204).send();
-//         }
-//     });
-// };
-
 export default {
     searchAdmins,
     addAdmin,
-    getDetailAdmin,
     updateAdmin,
-    // deleteAdmin,
 };

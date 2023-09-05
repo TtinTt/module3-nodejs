@@ -1,7 +1,7 @@
 import productRepository from "../repositories/product.repository.js";
 import fs from "fs";
 import { getFileExtension } from "../../utilities/upload.util.js";
-
+import path from "path";
 const searchProducts = (params, callback) => {
     if (params.limit && !/^[0-9]+$/.test(params.limit)) {
         callback({ message: "Limit phải là số" }, null);
@@ -382,6 +382,32 @@ const deleteProduct = (id, callback) => {
             } else if (result.affectedRows === 0) {
                 callback({ message: "Product not found" }, null);
             } else {
+                const folderPath = "./public/imgfiles/";
+
+                fs.readdir(folderPath, (err, files) => {
+                    if (err) {
+                        console.error("An error occurred:", err);
+                        return;
+                    } // lấy ra các file trong folder nếu lỗi thì log ra và return
+
+                    const filteredFiles = files.filter((file) =>
+                        file.startsWith(`${id}-`)
+                    ); //lọc file theo id
+
+                    console.log("Các file xóa:", filteredFiles);
+
+                    filteredFiles.forEach((file) => {
+                        const filePath = path.join(folderPath, file);
+                        fs.unlink(filePath, (err) => {
+                            if (err) {
+                                console.error(`Chưa xóa ${file}:`, err);
+                            } else {
+                                console.log(`Đã xóa ${file}`);
+                            }
+                        });
+                    });
+                });
+
                 callback(null, result);
             }
         });

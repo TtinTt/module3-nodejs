@@ -321,32 +321,11 @@ const updateOrder = (orderId, updateOrder, callback) => {
     connection.end();
 };
 
-// const deleteOrder = (id, callback) => {
-//     const connection = getConnection();
-
-//     connection.query(
-//         "DELETE FROM orders WHERE order_id = ?",
-//         [id],
-//         (error, result) => {
-//             if (error) {
-//                 callback(error, null);
-//             } else {
-//                 callback(null, result);
-//             }
-//         }
-//     );
-
-//     connection.end();
-// };
 
 export default {
     searchOrders,
     addOrder,
     getOrderByUserEmail,
-    // getDetailOrder,
-    // getOrderByOrdernameAndRole,
-    // getOrderByApiKey,
-    // createApiKey,
     updateOrder,
-    // deleteOrder,
+
 };

@@ -70,34 +70,22 @@ const addAdmin = (params, callback) => {
     }
 };
 
-const getDetailAdmin = (id, callback) => {
-    if (!/^[0-9]+$/.test(id)) {
-        callback({ message: "ID phải là số" }, null);
-    } else {
-        adminRepository.getDetailAdmin(id, (error, result) => {
-            if (error) {
-                callback(error, null);
-            } else if (result.length === 0) {
-                callback({ message: "Admin not found" }, null);
-            } else {
-                callback(null, result[0]);
-            }
-        });
-    }
-};
-const isArrayContainingObjects = (obj) => {
-    if (!Array.isArray(obj)) {
-        return false;
-    }
+// const getDetailAdmin = (id, callback) => {
+//     if (!/^[0-9]+$/.test(id)) {
+//         callback({ message: "ID phải là số" }, null);
+//     } else {
+//         adminRepository.getDetailAdmin(id, (error, result) => {
+//             if (error) {
+//                 callback(error, null);
+//             } else if (result.length === 0) {
+//                 callback({ message: "Admin not found" }, null);
+//             } else {
+//                 callback(null, result[0]);
+//             }
+//         });
+//     }
+// };
 
-    for (let item of obj) {
-        if (typeof item !== "object" || item === null || Array.isArray(item)) {
-            return false;
-        }
-    }
-
-    return true;
-};
 const updateAdmin = (adminId, requestBody, callback) => {
     console.log(requestBody);
     let originalname = null;
@@ -217,26 +205,8 @@ const updateAdmin = (adminId, requestBody, callback) => {
     }
 };
 
-// const deleteAdmin = (id, callback) => {
-//     if (!/^[0-9]+$/.test(id)) {
-//         callback({ message: "ID phải là số" }, null);
-//     } else {
-//         adminRepository.deleteAdmin(id, (error, result) => {
-//             if (error) {
-//                 callback(error, null);
-//             } else if (result.affectedRows === 0) {
-//                 callback({ message: "Admin not found" }, null);
-//             } else {
-//                 callback(null, result);
-//             }
-//         });
-//     }
-// };
-
 export default {
     searchAdmins,
     addAdmin,
-    getDetailAdmin,
     updateAdmin,
-    // deleteAdmin,
 };

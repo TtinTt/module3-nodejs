@@ -46,42 +46,6 @@ const addMess = (request, response) => {
     );
 };
 
-// const getMessByUserEmail = (request, response) => {
-//     const email = decodeURIComponent(request.params.email);
-//     console.log("email", email);
-
-//     messService.getMessByUserEmail(email, (error, result) => {
-//         if (error) {
-//             response.status(500).send({
-//                 error: error.message,
-//             });
-//         } else {
-//             response.send(result);
-//         }
-//     });
-// };
-
-// const getDetailMess = (request, response) => {
-//     if (request.auth.role !== 1) {
-//         response.status(403).send({
-//             error: "Không có quyền truy cập.",
-//         });
-
-//         return;
-//     }
-
-//     const { id } = request.params;
-//     messService.getDetailMess(id, (error, result) => {
-//         if (error) {
-//             response.status(500).send({
-//                 error: error.message,
-//             });
-//         } else {
-//             response.send(result);
-//         }
-//     });
-// };
-
 const updateMess = (request, response) => {
     console.log("check mess", request.body);
 
@@ -113,33 +77,8 @@ const updateMess = (request, response) => {
     );
 };
 
-// const deleteMess = (request, response) => {
-//     if (request.auth.role !== 1) {
-//         response.status(403).send({
-//             error: "Không có quyền truy cập.",
-//         });
-
-//         return;
-//     }
-
-//     const { id } = request.params;
-
-//     messService.deleteMess(id, (error, result) => {
-//         if (error) {
-//             response.status(500).send({
-//                 error: error.message,
-//             });
-//         } else {
-//             response.status(204).send();
-//         }
-//     });
-// };
-
 export default {
     searchMesss,
-    // getMessByUserEmail,
     addMess,
-    // getDetailMess,
     updateMess,
-    // deleteMess,
 };

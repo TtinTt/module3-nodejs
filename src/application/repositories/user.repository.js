@@ -80,30 +80,28 @@ const searchUsers = (params, callback) => {
     });
 };
 
-const addUser = (user, callback) => {
-    const connection = getConnection();
+// const addUser = (user, callback) => {
+//     const connection = getConnection();
 
-    const userToCreate = {
-        ...user,
-        password: encryptPassword(user.password),
-        // created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-        // updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-    };
+//     const userToCreate = {
+//         ...user,
+//         password: encryptPassword(user.password),
+//     };
 
-    connection.query(
-        "INSERT INTO users SET ?",
-        userToCreate,
-        (error, result) => {
-            if (error) {
-                callback(error, null);
-            } else {
-                callback(null, result);
-            }
-        }
-    );
+//     connection.query(
+//         "INSERT INTO users SET ?",
+//         userToCreate,
+//         (error, result) => {
+//             if (error) {
+//                 callback(error, null);
+//             } else {
+//                 callback(null, result);
+//             }
+//         }
+//     );
 
-    connection.end();
-};
+//     connection.end();
+// };
 
 const getDetailUser = (id, callback) => {
     const connection = getConnection();
@@ -303,31 +301,31 @@ const updateUser = (userId, params, callback) => {
     connection.end();
 };
 
-const deleteUser = (id, callback) => {
-    const connection = getConnection();
+// const deleteUser = (id, callback) => {
+//     const connection = getConnection();
 
-    connection.query(
-        "DELETE FROM users WHERE user_id = ?",
-        [id],
-        (error, result) => {
-            if (error) {
-                callback(error, null);
-            } else {
-                callback(null, result);
-            }
-        }
-    );
+//     connection.query(
+//         "DELETE FROM users WHERE user_id = ?",
+//         [id],
+//         (error, result) => {
+//             if (error) {
+//                 callback(error, null);
+//             } else {
+//                 callback(null, result);
+//             }
+//         }
+//     );
 
-    connection.end();
-};
+//     connection.end();
+// };
 
 export default {
     searchUsers,
-    addUser,
+    // addUser,
     getDetailUser,
     getUserByUsernameAndRole,
     getUserByApiKey,
     createApiKey,
     updateUser,
-    deleteUser,
+    // deleteUser,
 };

@@ -57,20 +57,9 @@ const logout = (request, response) => {
 
 const register = (request, response) => {
     const requestBody = request.body;
-    // console.log("requestBody", requestBody);
-    // const avatar =
-    //     request.file
-    // userService.addUser(
-    //     {
-    //         ...requestBody,
-    //         authId: request.auth.user_id,
-    //         avatar: avatar,
-    //     },
     authService.register(
         {
             ...requestBody,
-            // authId: request.auth.user_id,
-            // avatar: avatar,
         },
         (error, result) => {
             if (error) {
@@ -85,7 +74,6 @@ const register = (request, response) => {
                 }
             } else {
                 response.status(201).send();
-                // console.log(result);
             }
         }
     );

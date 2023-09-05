@@ -85,54 +85,6 @@ const addMess = (requestBody, callback) => {
     }
 };
 
-// const getMessByUserEmail = (email, callback) => {
-//     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-
-//     if (email == "") {
-//         errors.set("email", "Email không được để trống");
-//     } else if (!regex.test(email)) {
-//         errors.set("email", "Email không hợp lệ");
-//     } else {
-//         messRepository.getMessByUserEmail(email, (error, result) => {
-//             if (error) {
-//                 callback(error, null);
-//             } else if (result.length === 0) {
-//                 callback({ message: "Mess not found" }, null);
-//             } else {
-//                 callback(null, result);
-//             }
-//         });
-//     }
-// };
-
-// const getDetailMess = (id, callback) => {
-//     if (!/^[0-9]+$/.test(id)) {
-//         callback({ message: "ID phải là số" }, null);
-//     } else {
-//         messRepository.getDetailMess(id, (error, result) => {
-//             if (error) {
-//                 callback(error, null);
-//             } else if (result.length === 0) {
-//                 callback({ message: "Mess not found" }, null);
-//             } else {
-//                 callback(null, result[0]);
-//             }
-//         });
-//     }
-// };
-// const isArrayContainingObjects = (obj) => {
-//     if (!Array.isArray(obj)) {
-//         return false;
-//     }
-
-//     for (let item of obj) {
-//         if (typeof item !== "object" || item === null || Array.isArray(item)) {
-//             return false;
-//         }
-//     }
-
-//     return true;
-// };
 const updateMess = (messId, requestBody, callback) => {
     let originalname = null;
     const validate = (requestBody) => {
@@ -211,27 +163,8 @@ const updateMess = (messId, requestBody, callback) => {
     }
 };
 
-// const deleteMess = (id, callback) => {
-//     if (!/^[0-9]+$/.test(id)) {
-//         callback({ message: "ID phải là số" }, null);
-//     } else {
-//         messRepository.deleteMess(id, (error, result) => {
-//             if (error) {
-//                 callback(error, null);
-//             } else if (result.affectedRows === 0) {
-//                 callback({ message: "Mess not found" }, null);
-//             } else {
-//                 callback(null, result);
-//             }
-//         });
-//     }
-// };
-
 export default {
     searchMesss,
     addMess,
-    // getMessByUserEmail,
-    // getDetailMess,
     updateMess,
-    // deleteMess,
 };

@@ -141,34 +141,22 @@ const searchUsers = (params, callback) => {
 //     }
 // };
 
-const getDetailUser = (id, callback) => {
-    if (!/^[0-9]+$/.test(id)) {
-        callback({ message: "ID phải là số" }, null);
-    } else {
-        userRepository.getDetailUser(id, (error, result) => {
-            if (error) {
-                callback(error, null);
-            } else if (result.length === 0) {
-                callback({ message: "User not found" }, null);
-            } else {
-                callback(null, result[0]);
-            }
-        });
-    }
-};
-const isArrayContainingObjects = (obj) => {
-    if (!Array.isArray(obj)) {
-        return false;
-    }
+// const getDetailUser = (id, callback) => {
+//     if (!/^[0-9]+$/.test(id)) {
+//         callback({ message: "ID phải là số" }, null);
+//     } else {
+//         userRepository.getDetailUser(id, (error, result) => {
+//             if (error) {
+//                 callback(error, null);
+//             } else if (result.length === 0) {
+//                 callback({ message: "User not found" }, null);
+//             } else {
+//                 callback(null, result[0]);
+//             }
+//         });
+//     }
+// };
 
-    for (let item of obj) {
-        if (typeof item !== "object" || item === null || Array.isArray(item)) {
-            return false;
-        }
-    }
-
-    return true;
-};
 const updateUser = (userId, requestBody, callback) => {
     console.log(requestBody);
     let originalname = null;
@@ -288,26 +276,26 @@ const updateUser = (userId, requestBody, callback) => {
     }
 };
 
-const deleteUser = (id, callback) => {
-    if (!/^[0-9]+$/.test(id)) {
-        callback({ message: "ID phải là số" }, null);
-    } else {
-        userRepository.deleteUser(id, (error, result) => {
-            if (error) {
-                callback(error, null);
-            } else if (result.affectedRows === 0) {
-                callback({ message: "User not found" }, null);
-            } else {
-                callback(null, result);
-            }
-        });
-    }
-};
+// const deleteUser = (id, callback) => {
+//     if (!/^[0-9]+$/.test(id)) {
+//         callback({ message: "ID phải là số" }, null);
+//     } else {
+//         userRepository.deleteUser(id, (error, result) => {
+//             if (error) {
+//                 callback(error, null);
+//             } else if (result.affectedRows === 0) {
+//                 callback({ message: "User not found" }, null);
+//             } else {
+//                 callback(null, result);
+//             }
+//         });
+//     }
+// };
 
 export default {
     searchUsers,
     // addUser,
-    getDetailUser,
+    // getDetailUser,
     updateUser,
-    deleteUser,
+    // deleteUser,
 };

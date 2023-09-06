@@ -382,31 +382,31 @@ const deleteProduct = (id, callback) => {
             } else if (result.affectedRows === 0) {
                 callback({ message: "Product not found" }, null);
             } else {
-                const folderPath = "./public/imgfiles/";
+                // const folderPath = "./public/imgfiles/";
 
-                fs.readdir(folderPath, (err, files) => {
-                    if (err) {
-                        console.error("An error occurred:", err);
-                        return;
-                    } // lấy ra các file trong folder nếu lỗi thì log ra và return
+                // fs.readdir(folderPath, (err, files) => {
+                //     if (err) {
+                //         console.error("An error occurred:", err);
+                //         return;
+                //     } // lấy ra các file trong folder nếu lỗi thì log ra và return
 
-                    const filteredFiles = files.filter((file) =>
-                        file.startsWith(`${id}-`)
-                    ); //lọc file theo id
+                //     const filteredFiles = files.filter((file) =>
+                //         file.startsWith(`${id}-`)
+                //     ); //lọc file theo id
 
-                    console.log("Các file xóa:", filteredFiles);
+                //     console.log("Các file xóa:", filteredFiles);
 
-                    filteredFiles.forEach((file) => {
-                        const filePath = path.join(folderPath, file);
-                        fs.unlink(filePath, (err) => {
-                            if (err) {
-                                console.error(`Chưa xóa ${file}:`, err);
-                            } else {
-                                console.log(`Đã xóa ${file}`);
-                            }
-                        });
-                    });
-                });
+                //     filteredFiles.forEach((file) => {
+                //         const filePath = path.join(folderPath, file);
+                //         fs.unlink(filePath, (err) => {
+                //             if (err) {
+                //                 console.error(`Chưa xóa ${file}:`, err);
+                //             } else {
+                //                 console.log(`Đã xóa ${file}`);
+                //             }
+                //         });
+                //     });
+                // });
 
                 callback(null, result);
             }

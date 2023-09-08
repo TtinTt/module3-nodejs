@@ -1,6 +1,7 @@
 import moment from "moment";
 import getConnection from "./../../config/connection.database.js";
 import { encryptPassword } from "../../utilities/hash.util.js";
+import nodemailer from "nodemailer";
 
 const searchUsers = (params, callback) => {
     const bindParams = [];
@@ -301,6 +302,141 @@ const updateUser = (userId, params, callback) => {
     connection.end();
 };
 
+// Tạo mã ngẫu nhiên 6 ký tự nối với thời gian hiện tại
+const generateRandomCode = () => {
+    const randomString = Math.random().toString(36).substr(2, 6).toUpperCase();
+    const currentTime = Date.now().toString();
+    return randomString + "_" + currentTime;
+};
+
+let transporter = nodemailer.createTransport({
+    host: "smtp-mail.outlook.com", // hostname
+    secureConnection: false, // TLS requires secureConnection to be false
+    port: 587, // port for secure SMTP
+    service: "Outlook365",
+    auth: {
+        user: "COZYhandmade2032@outlook.com",
+        pass: "COZY2032handmade",
+    },
+    tls: {
+        ciphers: "SSLv3",
+    },
+});
+
+const sendEmail = (to, code) => {
+    const mailOptions = {
+        from: "COZYhandmade2032@outlook.com",
+        to: to,
+        subject: "Cozy - Mã đặt lại mật khẩu ",
+        text: `Mã đặt lại mật khẩu: ${code}
+        Lưu ý mã chỉ có hiệu lực trong vòng 5 phút.`,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log("Email sent: " + info.response);
+        }
+    });
+};
+
+const getCodeResetPassUser = (email, callback) => {
+    const connection = getConnection();
+    let sql = "UPDATE users SET code = ?";
+    let bindParams = [];
+
+    // Tạo mã ngẫu nhiên
+    const randomCode = generateRandomCode();
+    bindParams.push(randomCode);
+
+    sql += " WHERE email = ?";
+    bindParams.push(email);
+
+    console.log("sql", sql, "bindParams", bindParams);
+
+    connection.query(sql, bindParams, (error, result) => {
+        if (error) {
+            callback(error, null);
+        } else {
+            // Kiểm tra số lượng bản ghi được cập nhật
+            if (result.affectedRows > 0) {
+                // Gửi mã reset qua email
+                const codeToSend = randomCode.split("_")[0]; // Lấy đoạn mã phía trước dấu _
+                sendEmail(email, codeToSend); // Gửi email
+                callback(null, result);
+            } else {
+                console.log(
+                    "Không có người dùng nào có email được truyền vào."
+                );
+                callback(
+                    "Không có người dùng nào có email được truyền vào.",
+                    null
+                );
+            }
+        }
+    });
+
+    connection.end();
+};
+
+const isCodeExpired = (codeLong, code) => {
+    const parts = codeLong.split("_");
+
+    const codeTime = parseInt(parts[1], 10);
+    const currentTime = Date.now();
+
+    if (
+        // currentTime - codeTime < 5 * 60 * 1000 &&
+        code == parts[0]
+    ) {
+        return true;
+    } else {
+        return false;
+    }
+    // Kiểm tra xem thời gian có chênh lệch quá 5 phút hay không
+};
+
+const resetPass = (userInfo, callback) => {
+    const { email, code, password } = userInfo;
+    const connection = getConnection();
+
+    let sql = "SELECT code FROM users WHERE email = ?";
+    connection.query(sql, [email], (error, result) => {
+        if (error) {
+            callback(error, null);
+            return;
+        }
+
+        if (result.length === 0) {
+            callback("Không tìm thấy người dùng với email này.", null);
+            return;
+        }
+
+        const userCodeLong = result[0].code;
+        if (isCodeExpired(userCodeLong, code)) {
+            sql = "UPDATE users SET password = ? WHERE email = ?";
+            const hashedPassword = encryptPassword(password);
+
+            connection.query(sql, [hashedPassword, email], (error, result) => {
+                if (error) {
+                    callback(error, null);
+                } else {
+                    if (result.affectedRows > 0) {
+                        callback(null, "Mật khẩu đã được cập nhật.");
+                    } else {
+                        callback("Không thể cập nhật mật khẩu.", null);
+                    }
+                }
+            });
+        } else {
+            callback("Mã xác thực không hợp lệ hoặc đã hết hạn.", null);
+        }
+
+        connection.end();
+    });
+};
+
 // const deleteUser = (id, callback) => {
 //     const connection = getConnection();
 
@@ -321,11 +457,13 @@ const updateUser = (userId, params, callback) => {
 
 export default {
     searchUsers,
+    getCodeResetPassUser,
     // addUser,
     getDetailUser,
     getUserByUsernameAndRole,
     getUserByApiKey,
     createApiKey,
     updateUser,
+    resetPass,
     // deleteUser,
 };

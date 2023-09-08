@@ -11,7 +11,9 @@ export default function (request, response, next) {
         (method === "GET" && pathname === "/products") ||
         (method === "GET" && pathname === "/products/price") ||
         (method === "GET" && pathname === "/products/tag") ||
-        (method === "POST" && pathname === "/messs")
+        (method === "POST" && pathname === "/messs") ||
+        (method === "PUT" && pathname === "/users/getcode") ||
+        (method === "PUT" && pathname === "/users/resetpass")
     ) {
         next();
     } else {

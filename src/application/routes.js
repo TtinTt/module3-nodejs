@@ -23,14 +23,14 @@ router.post("/register", authController.register);
 
 // User management
 router.get("/users", userController.searchUsers); //userApi.searchUsers
+router.put("/users/getcode", userController.getCodeResetPassUser); //userApi.sendCodeResetPass
+router.put("/users/resetpass", userController.resetPass); //userApi.resetPass
 router.put("/users/:id", upload.single("img"), userController.updateUser); //userApi.updateUser
-
 
 // Admin management
 router.get("/admins", adminController.searchAdmins);
 router.post("/admins", adminController.addAdmin);
 router.put("/admins/:id", upload.single("img"), adminController.updateAdmin);
-
 
 // Product management
 router.get("/products", productController.searchProducts); //productApi.searchProducts

@@ -114,6 +114,41 @@ const updateUser = (request, response) => {
     );
 };
 
+const getCodeResetPassUser = (request, response) => {
+    const email = request.body.email;
+    console.log("email user resetpass: ", email);
+
+    userService.getCodeResetPassUser(email, (error, result) => {
+        if (error) {
+            response.status(500).send({
+                error: error,
+            });
+        } else {
+            response.status(200).send();
+        }
+    });
+};
+
+const resetPass = (request, response) => {
+    console.log("email user resetpass: ", request);
+
+    userService.resetPass(
+        {
+            email: request.body.email,
+            code: request.body.code,
+            password: request.body.password,
+        },
+        (error, result) => {
+            if (error) {
+                response.status(500).send({
+                    error: error,
+                });
+            } else {
+                response.status(200).send();
+            }
+        }
+    );
+};
 // const deleteUser = (request, response) => {
 //     if (request.auth.role !== 1) {
 //         response.status(403).send({
@@ -138,8 +173,10 @@ const updateUser = (request, response) => {
 
 export default {
     searchUsers,
+    updateUser,
+    getCodeResetPassUser,
+    resetPass,
     // addUser,
     // getDetailUser,
-    updateUser,
     // deleteUser,
 };

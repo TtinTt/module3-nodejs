@@ -5,11 +5,11 @@ import getEmail from "./getmail.js";
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
 
-  const emailLogin = "seth@livelyplastics.com"; //TODO: ĐỔI EMAIL Ở ĐÂY
+  const emailLogin = "info@burolino.de"; //TODO: EMAIL
   const urlInput =
-    // "http://sellaccs247.com/roundcubemail-1.4.11/?_task=mail&_mbox=INBOX.case"; //TODO: ĐỔI URL Ở ĐÂY
+    // "http://sellaccs247.com/roundcubemail-1.4.11/?_task=mail&_mbox=INBOX.case"; //TODO: URL
 
-    "http://sellaccs247.com/roundcubemail-1.4.11/?_task=mail&_mbox=INBOX"; //TODO: ĐỔI URL Ở ĐÂY
+    "http://sellaccs247.com/roundcubemail-1.4.11/?_task=mail&_mbox=INBOX"; //TODO: URL
 
   try {
     // Truy cập trang đăng nhập
@@ -31,7 +31,7 @@ import getEmail from "./getmail.js";
       console.log("Bạn đã đăng nhập thành công.");
 
       const startUID = 1;
-      const endUID = 88; // Thay đổi giá trị này theo nhu cầu của bạn
+      const endUID = 1706; // Thay đổi giá trị này theo nhu cầu của bạn
       // Sử dụng hàm getEmail và truyền trang đã đăng nhập
       await getEmail(startUID, endUID, emailLogin, urlInput, page);
     } else {

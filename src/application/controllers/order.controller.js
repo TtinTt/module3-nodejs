@@ -61,9 +61,50 @@ const getOrderByUserEmail = (request, response) => {
     });
 };
 
+const getDaysDifference = (date) => {
+    if (!date) {
+        return "";
+    }
+
+    let dateString = date.toString();
+    if (dateString == "") {
+        return "";
+    } else {
+        const [time, date] = dateString.split(" ");
+        const [hour, minute] = time.slice(0, -1).split(":");
+        const [day, month, year] = date.split("/");
+
+        const now = new Date();
+        const dateObject = new Date(year, month - 1, day, hour, minute);
+
+        const differenceInTime = now.getTime() - dateObject.getTime();
+        const differenceInDays = differenceInTime / (1000 * 3600);
+
+        return Math.abs(Math.round(differenceInDays));
+    }
+};
+
 const updateOrder = (request, response) => {
     const orderId = request.params.id;
     const requestBody = request.body;
+
+    if (
+        !request.authAdmin.admin_id &&
+        !(getDaysDifference(requestBody.date) > 4)
+    ) {
+        response.status(403).send({
+            error: "Không thể cập nhật đơn hàng trong thời gian còn có thể hủy bởi khách hàng",
+        });
+
+        return;
+    }
+
+    // if (!(getDaysDifference(requestBody.date) > 4)) {
+    //     errors.set(
+    //         "date",
+    //         "Không thể cập nhật đơn hàng trong thời gian còn có thể hủy bởi khách hàng"
+    //     );
+    // }
 
     orderService.updateOrder(
         orderId,

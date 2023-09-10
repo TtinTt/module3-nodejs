@@ -110,6 +110,7 @@ const addOrder = (order, callback) => {
     //         }
     //     }
     // );
+
     connection.query(
         "INSERT INTO orders (email, cart_json, address_json, date, status) VALUES (?, ?, ?, ?, ?)",
         [email, JSON.stringify(cart), JSON.stringify(address), date, status],
@@ -130,7 +131,7 @@ const getOrderByUserEmail = (email, callback) => {
     // let table = "orders";
 
     connection.query(
-        "SELECT id, email, JSON_UNQUOTE(JSON_EXTRACT(cart_json, '$')) AS cart, JSON_UNQUOTE(JSON_EXTRACT(address_json, '$')) AS address, date, status FROM orders WHERE email = ?",
+        "SELECT id, email, JSON_UNQUOTE(JSON_EXTRACT(cart_json, '$')) AS cart, JSON_UNQUOTE(JSON_EXTRACT(address_json, '$')) AS address, date, status FROM orders WHERE email = ? ORDER BY id DESC",
         [email],
 
         (error, result) => {
@@ -321,11 +322,9 @@ const updateOrder = (orderId, updateOrder, callback) => {
     connection.end();
 };
 
-
 export default {
     searchOrders,
     addOrder,
     getOrderByUserEmail,
     updateOrder,
-
 };

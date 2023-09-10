@@ -155,6 +155,8 @@ const getOrderByUserEmail = (email, callback) => {
 
 //     return true;
 // };
+// lấy số giờ từ thời điểm hiện tại đến một thời điểm khác (truyền vào dưới dạng string)
+
 const updateOrder = (orderId, requestBody, callback) => {
     let originalname = null;
     const validate = (requestBody) => {

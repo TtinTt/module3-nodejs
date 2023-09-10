@@ -39,6 +39,9 @@ const updateUser = (userId, requestBody, callback) => {
 
     const validate = (params) => {
         let errors = new Map();
+        if (params.status == 1 || params.status == 0) {
+            return errors;
+        }
 
         // Validate cart
         // if (
@@ -185,6 +188,7 @@ const resetPass = (requestBody, callback) => {
 
     const validate = (params) => {
         let errors = new Map();
+
         const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         // Validate name
         if (params.email == "") {

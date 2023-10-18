@@ -290,6 +290,7 @@ const updateOrder = (orderId, updateOrder, callback) => {
     const connection = getConnection();
     const updateKeys = [];
     const updateValues = [];
+    
     if (updateOrder.cart) {
         updateKeys.push("cart_json = ?");
         updateValues.push(JSON.stringify(updateOrder.cart));
@@ -298,6 +299,7 @@ const updateOrder = (orderId, updateOrder, callback) => {
         updateKeys.push("address_json = ?");
         updateValues.push(JSON.stringify(updateOrder.address));
     }
+
     if (updateOrder.status) {
         updateKeys.push("status = ?");
         updateValues.push(updateOrder.status);

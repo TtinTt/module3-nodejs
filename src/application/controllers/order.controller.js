@@ -88,16 +88,16 @@ const updateOrder = (request, response) => {
     const orderId = request.params.id;
     const requestBody = request.body;
 
-    if (
-        !request.authAdmin.admin_id &&
-        !(getDaysDifference(requestBody.date) > 4)
-    ) {
-        response.status(403).send({
-            error: "Không thể cập nhật đơn hàng trong thời gian còn có thể hủy bởi khách hàng",
-        });
+    // if (
+    //     !request.authAdmin.admin_id &&
+    //     !(getDaysDifference(requestBody.date) > 4)
+    // ) {
+    //     response.status(403).send({
+    //         error: "Không thể cập nhật đơn hàng trong thời gian còn có thể hủy bởi khách hàng",
+    //     });
 
-        return;
-    }
+    //     return;
+    // }
 
     // if (!(getDaysDifference(requestBody.date) > 4)) {
     //     errors.set(

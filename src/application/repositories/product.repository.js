@@ -66,14 +66,36 @@ const searchProducts = (params, callback) => {
             return;
         }
 
-        let sqlWithSortAndLimit = baseSql + " GROUP BY products.product_id";
+        // let sqlWithSortAndLimit =
+        //     baseSql +
+        //     " GROUP BY products.product_id ORDER BY products.product_id DESC"; // Thêm dòng này
 
-        switch (sortType) {
-            case "2":
-                sqlWithSortAndLimit += " ORDER BY price ASC";
+        // console.log("sortType", sortType);
+
+        // switch (parseInt(sortType)) {
+        //     case 2:
+        //         sqlWithSortAndLimit += ", price ASC";
+        //         break;
+        //     case 1:
+        //         sqlWithSortAndLimit += ", price DESC";
+        //         break;
+        // }
+        let sqlWithSortAndLimit;
+        switch (parseInt(sortType)) {
+            case 2:
+                sqlWithSortAndLimit =
+                    baseSql +
+                    " GROUP BY products.product_id ORDER BY price ASC, products.product_id DESC";
                 break;
-            case "1":
-                sqlWithSortAndLimit += " ORDER BY price DESC";
+            case 1:
+                sqlWithSortAndLimit =
+                    baseSql +
+                    " GROUP BY products.product_id ORDER BY price DESC, products.product_id DESC";
+                break;
+            default:
+                sqlWithSortAndLimit =
+                    baseSql +
+                    " GROUP BY products.product_id ORDER BY products.product_id DESC";
                 break;
         }
 
@@ -143,6 +165,180 @@ const searchProducts = (params, callback) => {
     });
 };
 
+const updateProduct = (ProductId, params, callback) => {
+    const connection = getConnection();
+
+    // Cập nhật thông tin sản phẩm trong bảng `products`
+    let sql =
+        "UPDATE products SET name = ?, price = ?, comparative = ?, sku = ?, description = ? WHERE product_id = ?";
+    let bindParams = [
+        params.name,
+        params.price,
+        params.comparative,
+        params.sku,
+        params.description,
+        ProductId,
+    ];
+
+    connection.query(sql, bindParams, (error, result) => {
+        if (error) {
+            callback(error, null);
+            return;
+        }
+
+        // Xóa các tag cũ trong bảng `product_tags`
+        sql = "DELETE FROM product_tags WHERE product_id = ?";
+        connection.query(sql, [ProductId], (error, result) => {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+
+            // Thêm các tag mới vào bảng `product_tags`
+            const tags = params.tag.split(",");
+            const tagInsertQueries = tags.map((tag) => {
+                sql =
+                    "INSERT INTO product_tags (product_id, tag) VALUES (?, ?)";
+                return new Promise((resolve, reject) => {
+                    connection.query(sql, [ProductId, tag], (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    });
+                });
+            });
+
+            // Xóa các ảnh cũ trong bảng `product_images`
+            sql = "DELETE FROM product_images WHERE product_id = ?";
+            connection.query(sql, [ProductId], (error, result) => {
+                if (error) {
+                    callback(error, null);
+                    return;
+                }
+
+                // Thêm các ảnh mới vào bảng `product_images`
+                const imgInsertQueries = params.img.map((imgUrl) => {
+                    sql =
+                        "INSERT INTO product_images (product_id, image_url) VALUES (?, ?)";
+                    return new Promise((resolve, reject) => {
+                        connection.query(
+                            sql,
+                            [ProductId, imgUrl],
+                            (error, result) => {
+                                if (error) reject(error);
+                                else resolve(result);
+                            }
+                        );
+                    });
+                });
+
+                // Thực hiện tất cả các truy vấn để thêm tag và ảnh
+                Promise.all([...tagInsertQueries, ...imgInsertQueries])
+                    .then(() => {
+                        callback(
+                            null,
+                            "Cập nhật sản phẩm và các tag, ảnh liên quan thành công."
+                        );
+                        connection.end();
+                    })
+                    .catch((error) => {
+                        callback(error, null);
+                        connection.end();
+                    });
+            });
+        });
+    });
+};
+
+const addProduct = (params, handleSaveFile, callback) => {
+    const connection = getConnection();
+
+    connection.beginTransaction(function (err) {
+        if (err) {
+            callback(err, null);
+            return;
+        }
+
+        // Thêm thông tin sản phẩm vào bảng `products`
+        let sql =
+            "INSERT INTO products (name, price, comparative, sku, description) VALUES (?, ?, ?, ?, ?)";
+        let bindParams = [
+            params.name,
+            params.price,
+            params.comparative,
+            params.sku,
+            params.description,
+        ];
+
+        connection.query(sql, bindParams, (error, result) => {
+            if (error) {
+                return connection.rollback(function () {
+                    callback(error, null);
+                });
+            }
+
+            const newProductId = result.insertId;
+
+            // Code để tạo tên tập tin hình ảnh với newProductId tại đây
+            params.img = handleSaveFile(newProductId);
+
+            // Thêm các tag vào bảng `product_tags`
+            const tags = params.tag.split(",");
+            const tagInsertQueries = tags.map((tag) => {
+                sql =
+                    "INSERT INTO product_tags (product_id, tag) VALUES (?, ?)";
+                return new Promise((resolve, reject) => {
+                    connection.query(
+                        sql,
+                        [newProductId, tag],
+                        (error, result) => {
+                            if (error) reject(error);
+                            else resolve(result);
+                        }
+                    );
+                });
+            });
+
+            // Thêm các ảnh vào bảng `product_images`
+            const imgInsertQueries = params.img.map((imgUrl) => {
+                sql =
+                    "INSERT INTO product_images (product_id, image_url) VALUES (?, ?)";
+                return new Promise((resolve, reject) => {
+                    connection.query(
+                        sql,
+                        [newProductId, imgUrl],
+                        (error, result) => {
+                            if (error) reject(error);
+                            else resolve(result);
+                        }
+                    );
+                });
+            });
+
+            // Thực hiện tất cả các truy vấn để thêm tag và ảnh
+            Promise.all([...tagInsertQueries, ...imgInsertQueries])
+                .then(() => {
+                    connection.commit(function (err) {
+                        if (err) {
+                            return connection.rollback(function () {
+                                callback(err, null);
+                            });
+                        }
+                        callback(
+                            null,
+                            "Thêm sản phẩm và các tag, ảnh liên quan thành công."
+                        );
+                    });
+                    connection.end();
+                })
+                .catch((error) => {
+                    return connection.rollback(function () {
+                        callback(error, null);
+                    });
+                });
+        });
+    });
+};
+
 const getPrice = (callback) => {
     const connection = getConnection();
 
@@ -175,6 +371,91 @@ const getPrice = (callback) => {
     });
 };
 
+const getTag = (callback) => {
+    const connection = getConnection();
+
+    const tagQuery = `
+        SELECT DISTINCT tag 
+        FROM (
+            SELECT pt.tag, 
+                   ROW_NUMBER() OVER(PARTITION BY pt.product_id ORDER BY pt.tag_id ASC) as rn 
+            FROM product_tags pt
+        ) as tmp
+        WHERE rn = 1;
+    `;
+
+    connection.query(tagQuery, [], (error, results) => {
+        if (error) {
+            console.log(error);
+            callback(error, null);
+            connection.end();
+            return;
+        }
+
+        if (results.length === 0) {
+            callback(null, {
+                tags: [],
+            });
+            connection.end();
+            return;
+        }
+
+        const tags = results.map((result) => result.tag);
+
+        callback(null, {
+            tags: tags,
+        });
+        connection.end();
+    });
+};
+
+const deleteProduct = (id, callback) => {
+    const connection = getConnection();
+
+    // Xóa thông tin sản phẩm từ bảng `product_images`
+    connection.query(
+        "DELETE FROM product_images WHERE product_id = ?",
+        [id],
+        (error, result) => {
+            if (error) {
+                callback(error, null);
+                connection.end();
+                return;
+            }
+
+            // Xóa thông tin sản phẩm từ bảng `product_tags`
+            connection.query(
+                "DELETE FROM product_tags WHERE product_id = ?",
+                [id],
+                (error, result) => {
+                    if (error) {
+                        callback(error, null);
+                        connection.end();
+                        return;
+                    }
+
+                    // Xóa thông tin sản phẩm từ bảng `products`
+                    connection.query(
+                        "DELETE FROM products WHERE product_id = ?",
+                        [id],
+                        (error, result) => {
+                            if (error) {
+                                callback(error, null);
+                            } else {
+                                callback(
+                                    null,
+                                    "Xóa sản phẩm và các thông tin liên quan thành công"
+                                );
+                            }
+                            connection.end();
+                        }
+                    );
+                }
+            );
+        }
+    );
+};
+
 // // Sử dụng hàm:
 // let searchParams = {
 //     page: 1,
@@ -192,11 +473,12 @@ const getPrice = (callback) => {
 export default {
     searchProducts,
     getPrice,
-    // ,addProduct,
+    getTag,
+    addProduct,
     // getDetailProduct,
     // getProductByProductnameAndRole,
     // getProductByApiKey,
     // createApiKey,
-    // updateProduct,
-    // deleteProduct,
+    updateProduct,
+    deleteProduct,
 };

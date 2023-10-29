@@ -4,7 +4,7 @@ const login = (request, response) => {
     const requestBody = request.body;
 
     const params = {
-        username: requestBody.username,
+        email: requestBody.email,
         password: requestBody.password,
         type: requestBody.type,
     };
@@ -13,6 +13,7 @@ const login = (request, response) => {
         if (error) {
             response.status(error.code).send({
                 error: error.message,
+                status: error.code,
             });
         } else {
             response.send(result);
@@ -21,14 +22,24 @@ const login = (request, response) => {
 };
 
 const getAuth = (request, response) => {
-    authService.getAuth(request.auth.user_id, (error, result) => {
+    const userId = request.auth?.user_id;
+    const adminId = request.authAdmin?.admin_id;
+
+    // Nếu cả hai đều không tồn tại, trả về lỗi
+    if (!userId && !adminId) {
+        return response.status(400).send({
+            error: "Thiếu thông tin xác thực.",
+        });
+    }
+
+    // Gọi dịch vụ với userId và/hoặc adminId
+    authService.getAuth(userId, adminId, (error, result) => {
         if (error) {
-            response.status(401).send({
-                error: error,
+            return response.status(500).send({
+                error: "Lỗi khi xác thực.",
             });
-        } else {
-            response.send(result);
         }
+        response.send(result);
     });
 };
 
@@ -46,20 +57,9 @@ const logout = (request, response) => {
 
 const register = (request, response) => {
     const requestBody = request.body;
-    // console.log("requestBody", requestBody);
-    // const avatar =
-    //     request.file
-    // userService.addUser(
-    //     {
-    //         ...requestBody,
-    //         authId: request.auth.user_id,
-    //         avatar: avatar,
-    //     },
     authService.register(
         {
             ...requestBody,
-            // authId: request.auth.user_id,
-            // avatar: avatar,
         },
         (error, result) => {
             if (error) {
@@ -74,7 +74,6 @@ const register = (request, response) => {
                 }
             } else {
                 response.status(201).send();
-                // console.log(result);
             }
         }
     );

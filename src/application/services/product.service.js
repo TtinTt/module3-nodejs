@@ -114,32 +114,6 @@ const addProduct = (requestBody, callback) => {
     } else {
         let imgFiles = null;
         let processedImgFiles = [];
-        // if (requestBody.imgFiles?.length > 0) {
-        //     // console.log(requestBody.imgFiles);
-        //     imgFiles = requestBody.imgFiles;
-        //     imgFiles.forEach((imgFile, index) => {
-        //         console.log(imgFile.originalname);
-        //         let originalname = parseName(imgFile.originalname);
-        //         let indexImg = imgFile.fieldname.slice(-1);
-        //         console.log("file name", originalname, " - index", indexImg);
-        //         // let originalname = imgFile.originalname;
-        //         const imgFilesExtension = getFileExtension(
-        //             imgFile.originalname
-        //         );
-        //         let path = imgFile.path;
-        //         let newImgFilePath = `imgFiles/${productId}-${indexImg}.${imgFilesExtension}`; // Sử dụng một biến mới
-        //         processedImgFiles.push(newImgFilePath); // Thêm đường dẫn vào mảng
-        //         const imgFilesLocation = `./public/${newImgFilePath}`; // Cập nhật biến này
-
-        //         // Copy upload file to saving location
-        //         fs.cpSync(path, imgFilesLocation);
-        //         fs.rmSync(path);
-        //     });
-
-        //     // console.log("file", processedImgFiles, "url", requestBody.imgUrls);
-        // }
-
-        // let img = requestBody.imgUrls || [];
 
         const handleSaveFile = (productId) => {
             // console.log(requestBody.imgFiles);
